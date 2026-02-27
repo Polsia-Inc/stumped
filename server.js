@@ -233,6 +233,80 @@ app.get('/api/auth/me', async (req, res) => {
 });
 
 // ============================================================
+// USER PROFILE API
+// ============================================================
+
+// Get user profile by display name
+app.get('/api/users/:displayName', async (req, res) => {
+  try {
+    const { displayName } = req.params;
+
+    // Get user
+    const userResult = await pool.query(
+      'SELECT id, display_name, avatar_url, created_at FROM users WHERE LOWER(display_name) = $1',
+      [displayName.toLowerCase()]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user = userResult.rows[0];
+
+    // Get created quizzes
+    const quizzesResult = await pool.query(
+      `SELECT q.slug, q.topic, q.created_at,
+              COUNT(DISTINCT qa.id) as play_count
+       FROM quizzes q
+       LEFT JOIN quiz_attempts qa ON qa.quiz_id = q.id
+       WHERE q.created_by_user_id = $1
+       GROUP BY q.id, q.slug, q.topic, q.created_at
+       ORDER BY q.created_at DESC
+       LIMIT 20`,
+      [user.id]
+    );
+
+    // Get stats
+    const statsResult = await pool.query(
+      `SELECT
+        COUNT(DISTINCT q.id) as quizzes_created,
+        COUNT(DISTINCT qa.id) as quizzes_taken,
+        COALESCE(AVG(qa.score::float / qa.total_questions * 100), 0) as avg_score_percentage
+       FROM users u
+       LEFT JOIN quizzes q ON q.created_by_user_id = u.id
+       LEFT JOIN quiz_attempts qa ON qa.user_id = u.id
+       WHERE u.id = $1`,
+      [user.id]
+    );
+
+    const stats = statsResult.rows[0];
+
+    res.json({
+      user: {
+        displayName: user.display_name,
+        avatarUrl: user.avatar_url,
+        joinedAt: user.created_at
+      },
+      stats: {
+        quizzesCreated: parseInt(stats.quizzes_created),
+        quizzesTaken: parseInt(stats.quizzes_taken),
+        avgScore: Math.round(parseFloat(stats.avg_score_percentage))
+      },
+      quizzes: quizzesResult.rows.map(row => ({
+        slug: row.slug,
+        topic: row.topic,
+        createdAt: row.created_at,
+        playCount: parseInt(row.play_count),
+        url: `/quiz/${row.slug}`
+      }))
+    });
+  } catch (err) {
+    console.error('Get user profile error:', err);
+    res.status(500).json({ error: 'Failed to load profile' });
+  }
+});
+
+// ============================================================
 // DASHBOARD API
 // ============================================================
 
@@ -596,9 +670,12 @@ app.get('/api/quizzes/:slug/leaderboard', async (req, res) => {
     const quizId = quizResult.rows[0].id;
 
     const leaderboard = await pool.query(
-      `SELECT player_name, score, total_questions, time_taken_seconds, completed_at
-       FROM quiz_attempts WHERE quiz_id = $1
-       ORDER BY score DESC, time_taken_seconds ASC NULLS LAST
+      `SELECT qa.player_name, qa.score, qa.total_questions, qa.time_taken_seconds, qa.completed_at,
+              u.display_name as user_display_name
+       FROM quiz_attempts qa
+       LEFT JOIN users u ON u.id = qa.user_id
+       WHERE qa.quiz_id = $1
+       ORDER BY qa.score DESC, qa.time_taken_seconds ASC NULLS LAST
        LIMIT 50`,
       [quizId]
     );
@@ -608,6 +685,7 @@ app.get('/api/quizzes/:slug/leaderboard', async (req, res) => {
       entries: leaderboard.rows.map((row, i) => ({
         rank: i + 1,
         playerName: row.player_name,
+        userDisplayName: row.user_display_name, // For profile link
         score: row.score,
         total: row.total_questions,
         timeTaken: row.time_taken_seconds,
@@ -646,6 +724,13 @@ app.get('/quiz/:slug', async (req, res) => {
     console.error('Quiz page error:', err);
     res.type('html').send(getQuizPageHTML(req.params.slug, 'Trivia Quiz', 0, 'https://stumped.polsia.app'));
   }
+});
+
+// ============================================================
+// User profile page
+// ============================================================
+app.get('/u/:displayName', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'profile.html'));
 });
 
 // ============================================================
@@ -1488,7 +1573,14 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
           const isMe = e.playerName === playerName;
           html += '<div class="lb-row' + (isMe ? ' highlight' : '') + '">';
           html += '<span class="lb-rank">' + e.rank + '</span>';
-          html += '<span class="lb-name">' + escHtml(e.playerName) + (isMe ? ' (you)' : '') + '</span>';
+
+          // Link to profile if user has account
+          if (e.userDisplayName) {
+            html += '<span class="lb-name"><a href="/u/' + encodeURIComponent(e.userDisplayName) + '" style="color:var(--text);text-decoration:none;">' + escHtml(e.playerName) + '</a>' + (isMe ? ' (you)' : '') + '</span>';
+          } else {
+            html += '<span class="lb-name">' + escHtml(e.playerName) + (isMe ? ' (you)' : '') + '</span>';
+          }
+
           html += '<span class="lb-score">' + e.score + '/' + e.total + '</span>';
           html += '<span class="lb-time">' + (e.timeTaken ? formatTime(e.timeTaken) : '-') + '</span>';
           html += '</div>';
