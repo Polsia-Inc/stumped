@@ -16,12 +16,12 @@
   },
   {
     "content": "Phase 6: My Quizzes dashboard (/dashboard page showing created quizzes)",
-    "status": "in_progress",
+    "status": "completed",
     "activeForm": "Building My Quizzes dashboard"
   },
   {
     "content": "Phase 7: Quiz history tracking and leaderboard integration",
-    "status": "pending",
+    "status": "in_progress",
     "activeForm": "Building quiz history and leaderboard integration"
   },
   {

@@ -270,6 +270,44 @@ app.get('/api/dashboard/my-quizzes', async (req, res) => {
   }
 });
 
+// Get user's quiz history (quizzes they've taken)
+app.get('/api/dashboard/quiz-history', async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const result = await pool.query(
+      `SELECT qa.id, qa.quiz_id, qa.score, qa.total_questions, qa.time_taken_seconds, qa.completed_at,
+              q.slug, q.topic
+       FROM quiz_attempts qa
+       JOIN quizzes q ON q.id = qa.quiz_id
+       WHERE qa.user_id = $1
+       ORDER BY qa.completed_at DESC
+       LIMIT 50`,
+      [req.session.userId]
+    );
+
+    res.json({
+      history: result.rows.map(row => ({
+        id: row.id,
+        quizId: row.quiz_id,
+        slug: row.slug,
+        topic: row.topic,
+        score: row.score,
+        total: row.total_questions,
+        percentage: Math.round((row.score / row.total_questions) * 100),
+        timeTaken: row.time_taken_seconds,
+        completedAt: row.completed_at,
+        url: `/quiz/${row.slug}`
+      }))
+    });
+  } catch (err) {
+    console.error('Get quiz history error:', err);
+    res.status(500).json({ error: 'Failed to load quiz history' });
+  }
+});
+
 // Delete a quiz
 app.delete('/api/quizzes/:slug', async (req, res) => {
   try {
@@ -517,11 +555,13 @@ app.post('/api/quizzes/:slug/submit', async (req, res) => {
       };
     });
 
-    // Save attempt
+    // Save attempt (link to user if logged in)
+    const userId = req.session.userId || null;
+
     await pool.query(
-      `INSERT INTO quiz_attempts (quiz_id, player_name, score, total_questions, time_taken_seconds, answers)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
-      [quizId, playerName.trim().substring(0, 100), score, correctResult.rows.length, timeTaken || null, JSON.stringify(answers)]
+      `INSERT INTO quiz_attempts (quiz_id, player_name, score, total_questions, time_taken_seconds, answers, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [quizId, playerName.trim().substring(0, 100), score, correctResult.rows.length, timeTaken || null, JSON.stringify(answers), userId]
     );
 
     res.json({
@@ -1205,6 +1245,7 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
 
   <script>
   // Auth state
+  let currentUser = null;
   (function() {
     const navAuth = document.getElementById('nav-auth');
 
@@ -1213,7 +1254,16 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
         const res = await fetch('/api/auth/me');
         if (res.ok) {
           const data = await res.json();
+          currentUser = data.user;
           navAuth.innerHTML = '<a href="/dashboard" style="font-size:13px;color:var(--text);text-decoration:none;font-weight:500;">' + escHtml(data.user.displayName) + '</a>';
+
+          // Auto-fill name for logged-in users
+          const nameInput = document.getElementById('player-name');
+          if (nameInput) {
+            nameInput.value = data.user.displayName;
+            nameInput.setAttribute('readonly', 'true');
+            nameInput.style.opacity = '0.7';
+          }
         } else {
           navAuth.innerHTML = '<a href="/login.html" style="font-size:13px;color:var(--text-muted);text-decoration:none;">Log In</a>';
         }
