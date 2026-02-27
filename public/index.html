@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #fafafa;
+            color: #1a1a1a;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+        h1 { font-size: 2rem; margin-bottom: 16px; }
+        p { color: #666; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to your app</h1>
+        <p>Built with Polsia</p>
+    </div>
+
+    <!-- Polsia Analytics - tracks page views for your dashboard -->
+    <script>
+    (function() {
+        var slug = '__POLSIA_SLUG__';
+        if (!slug || slug === '__POLSIA_' + 'SLUG__') return;
+
+        var vid = localStorage.getItem('polsia_vid');
+        if (!vid) {
+            vid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            localStorage.setItem('polsia_vid', vid);
+        }
+        new Image().src = 'https://polsia.com/api/beacon/pixel?s=' + encodeURIComponent(slug) + '&v=' + encodeURIComponent(vid);
+    })();
+    </script>
+</body>
+</html>
