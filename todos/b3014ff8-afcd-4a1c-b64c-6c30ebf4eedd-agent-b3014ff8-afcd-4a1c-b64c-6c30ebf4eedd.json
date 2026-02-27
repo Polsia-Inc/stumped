@@ -1,0 +1,42 @@
+[
+  {
+    "content": "Phase 1: Database schema for users, quiz ownership, and quiz history",
+    "status": "in_progress",
+    "activeForm": "Building database schema"
+  },
+  {
+    "content": "Phase 2: Backend auth system (express-session, bcrypt, signup/login/logout API)",
+    "status": "pending",
+    "activeForm": "Building backend auth system"
+  },
+  {
+    "content": "Phase 3: Auth UI pages (signup, login, nav updates with user display)",
+    "status": "pending",
+    "activeForm": "Building auth UI pages"
+  },
+  {
+    "content": "Phase 4: Google OAuth integration",
+    "status": "pending",
+    "activeForm": "Integrating Google OAuth"
+  },
+  {
+    "content": "Phase 5: User profiles system (display name, avatar, public /u/username page)",
+    "status": "pending",
+    "activeForm": "Building user profile system"
+  },
+  {
+    "content": "Phase 6: My Quizzes dashboard (/dashboard page showing created quizzes)",
+    "status": "pending",
+    "activeForm": "Building My Quizzes dashboard"
+  },
+  {
+    "content": "Phase 7: Quiz history tracking and leaderboard integration",
+    "status": "pending",
+    "activeForm": "Building quiz history and leaderboard integration"
+  },
+  {
+    "content": "Phase 8: Anonymous quiz claiming system",
+    "status": "pending",
+    "activeForm": "Building anonymous quiz claiming"
+  }
+]
