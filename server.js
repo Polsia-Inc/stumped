@@ -707,10 +707,153 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
     }
     .error-msg.show { display: block; }
 
-    @media (max-width: 600px) {
-      .question-text { font-size: 20px; }
-      .results-score { font-size: 56px; }
-      .lb-row { grid-template-columns: 40px 1fr 60px 60px; padding: 12px 14px; }
+    /* MOBILE — Tablet (768px) */
+    @media (max-width: 768px) {
+      .container { padding: 0 16px; }
+      .join-screen { padding: 48px 0; }
+      .join-screen h1 { font-size: 30px; }
+      .quiz-screen { padding: 28px 0; }
+      .question-text { font-size: 22px; margin-bottom: 28px; }
+      .results-screen { padding: 32px 0 64px; }
+      .results-hero { margin-bottom: 36px; }
+      .share-section { padding: 20px; margin-bottom: 32px; }
+      .leaderboard-section { margin-bottom: 32px; }
+    }
+
+    /* MOBILE — Phone (480px) */
+    @media (max-width: 480px) {
+      .container { padding: 0 14px; }
+      .quiz-nav { padding: 14px 0; }
+      .logo { font-size: 18px; }
+
+      /* Join screen */
+      .join-screen { padding: 36px 0; }
+      .join-topic { font-size: 12px; padding: 5px 14px; margin-bottom: 20px; }
+      .join-screen h1 { font-size: 26px; letter-spacing: -0.5px; margin-bottom: 10px; }
+      .join-meta { font-size: 14px; margin-bottom: 28px; }
+      .join-form { max-width: 100%; }
+      .join-input {
+        font-size: 16px;
+        padding: 16px 18px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+      }
+      .btn-play {
+        min-height: 52px;
+        font-size: 16px;
+        padding: 16px;
+        border-radius: 12px;
+      }
+
+      /* Quiz screen */
+      .quiz-screen { padding: 20px 0; }
+      .quiz-header { margin-bottom: 6px; }
+      .quiz-topic-label { font-size: 13px; }
+      .quiz-timer {
+        font-size: 20px;
+        padding: 8px 18px;
+        border-radius: 10px;
+        min-width: 64px;
+      }
+      .quiz-progress { margin-bottom: 24px; height: 5px; }
+      .question-counter { font-size: 13px; margin-bottom: 12px; }
+      .question-text {
+        font-size: 20px;
+        line-height: 1.4;
+        margin-bottom: 24px;
+      }
+      .options-list { gap: 10px; }
+      .option-btn {
+        padding: 16px 16px;
+        border-radius: 14px;
+        font-size: 15px;
+        gap: 12px;
+        min-height: 56px;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .option-btn:active {
+        transform: scale(0.98);
+        background: var(--surface-2);
+      }
+      .option-letter {
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+        border-radius: 10px;
+      }
+
+      /* Results screen */
+      .results-screen { padding: 28px 0 48px; }
+      .results-hero { margin-bottom: 28px; }
+      .results-score { font-size: 52px; letter-spacing: -2px; }
+      .results-label { font-size: 14px; }
+      .results-msg { font-size: 20px; margin-top: 16px; }
+
+      /* Share section */
+      .share-section {
+        padding: 20px 16px;
+        border-radius: 14px;
+        margin-bottom: 28px;
+      }
+      .share-section p { font-size: 14px; margin-bottom: 14px; }
+      .share-actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .btn-share {
+        width: 100%;
+        padding: 14px 20px;
+        min-height: 48px;
+        font-size: 15px;
+        border-radius: 12px;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .btn-share:active { transform: scale(0.98); }
+
+      /* Leaderboard */
+      .leaderboard-title { font-size: 18px; margin-bottom: 12px; }
+      .leaderboard-table { border-radius: 14px; }
+      .lb-row {
+        grid-template-columns: 36px 1fr 56px 56px;
+        padding: 12px 14px;
+        font-size: 13px;
+        min-height: 48px;
+        align-items: center;
+      }
+      .lb-row.header {
+        font-size: 11px;
+        padding: 10px 14px;
+        min-height: auto;
+      }
+      .lb-rank { font-size: 14px; }
+      .lb-name { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .lb-score { font-size: 13px; }
+      .lb-time { font-size: 12px; }
+
+      /* Review */
+      .review-title { font-size: 18px; margin-bottom: 12px; }
+      .review-card {
+        padding: 16px;
+        border-radius: 14px;
+        margin-bottom: 10px;
+      }
+      .review-q { font-size: 14px; margin-bottom: 10px; }
+      .review-answer { font-size: 13px; padding: 8px 12px; border-radius: 8px; }
+
+      /* Loading */
+      .loading { padding: 60px 0; }
+    }
+
+    /* Extra small phones (375px and below like iPhone SE) */
+    @media (max-width: 375px) {
+      .container { padding: 0 12px; }
+      .join-screen h1 { font-size: 24px; }
+      .question-text { font-size: 18px; }
+      .results-score { font-size: 44px; }
+      .option-btn { padding: 14px 14px; font-size: 14px; min-height: 52px; }
+      .option-letter { width: 32px; height: 32px; font-size: 14px; }
+      .lb-row { grid-template-columns: 32px 1fr 48px 48px; padding: 10px 12px; font-size: 12px; }
+      .lb-row.header { font-size: 10px; }
     }
   </style>
 </head>
