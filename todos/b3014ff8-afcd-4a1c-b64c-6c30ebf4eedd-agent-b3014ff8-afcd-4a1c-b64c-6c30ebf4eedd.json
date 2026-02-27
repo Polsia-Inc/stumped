@@ -1,12 +1,12 @@
 [
   {
     "content": "Phase 1: Database schema for users, quiz ownership, and quiz history",
-    "status": "in_progress",
+    "status": "completed",
     "activeForm": "Building database schema"
   },
   {
     "content": "Phase 2: Backend auth system (express-session, bcrypt, signup/login/logout API)",
-    "status": "pending",
+    "status": "in_progress",
     "activeForm": "Building backend auth system"
   },
   {

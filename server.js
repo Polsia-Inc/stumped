@@ -4,6 +4,10 @@ const OpenAI = require('openai');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
+const { validatePassword } = require('./lib/password-policy');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -24,6 +28,23 @@ const openai = new OpenAI({
   baseURL: process.env.OPENAI_BASE_URL
 });
 
+// Session middleware
+app.use(session({
+  store: new pgSession({
+    pool: pool,
+    tableName: 'sessions'
+  }),
+  secret: process.env.SESSION_SECRET || 'stumped-secret-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  }
+}));
+
 app.use(express.json());
 
 // Health check endpoint (required for Render)
@@ -41,6 +62,175 @@ app.use(express.static(path.join(__dirname, 'public')));
 function generateSlug() {
   return crypto.randomBytes(4).toString('hex'); // 8 char hex slug
 }
+
+// ============================================================
+// AUTH API
+// ============================================================
+
+// Signup
+app.post('/api/auth/signup', async (req, res) => {
+  try {
+    const { email, password, displayName } = req.body;
+
+    if (!email || !email.trim()) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    if (!password) {
+      return res.status(400).json({ error: 'Password is required' });
+    }
+
+    if (!displayName || !displayName.trim()) {
+      return res.status(400).json({ error: 'Display name is required' });
+    }
+
+    // Validate password
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+      return res.status(400).json({ error: passwordCheck.errors[0] });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanDisplayName = displayName.trim().substring(0, 100);
+
+    // Check if email exists
+    const emailCheck = await pool.query(
+      'SELECT id FROM users WHERE LOWER(email) = $1',
+      [cleanEmail]
+    );
+
+    if (emailCheck.rows.length > 0) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+
+    // Check if display name exists
+    const nameCheck = await pool.query(
+      'SELECT id FROM users WHERE LOWER(display_name) = $1',
+      [cleanDisplayName.toLowerCase()]
+    );
+
+    if (nameCheck.rows.length > 0) {
+      return res.status(400).json({ error: 'Display name already taken' });
+    }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Create user
+    const result = await pool.query(
+      `INSERT INTO users (email, password_hash, display_name)
+       VALUES ($1, $2, $3)
+       RETURNING id, email, display_name, created_at`,
+      [cleanEmail, passwordHash, cleanDisplayName]
+    );
+
+    const user = result.rows[0];
+
+    // Set session
+    req.session.userId = user.id;
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        displayName: user.display_name
+      }
+    });
+  } catch (err) {
+    console.error('Signup error:', err);
+    res.status(500).json({ error: 'Signup failed. Please try again.' });
+  }
+});
+
+// Login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Find user
+    const result = await pool.query(
+      'SELECT id, email, password_hash, display_name FROM users WHERE LOWER(email) = $1',
+      [cleanEmail]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const user = result.rows[0];
+
+    // Check password
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Set session
+    req.session.userId = user.id;
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        displayName: user.display_name
+      }
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Login failed. Please try again.' });
+  }
+});
+
+// Logout
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Logout error:', err);
+      return res.status(500).json({ error: 'Logout failed' });
+    }
+    res.json({ message: 'Logged out successfully' });
+  });
+});
+
+// Get current user
+app.get('/api/auth/me', async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const result = await pool.query(
+      'SELECT id, email, display_name, avatar_url FROM users WHERE id = $1',
+      [req.session.userId]
+    );
+
+    if (result.rows.length === 0) {
+      req.session.destroy();
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    const user = result.rows[0];
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        displayName: user.display_name,
+        avatarUrl: user.avatar_url
+      }
+    });
+  } catch (err) {
+    console.error('Get user error:', err);
+    res.status(500).json({ error: 'Failed to get user' });
+  }
+});
 
 // ============================================================
 // API: Generate a quiz
