@@ -185,7 +185,77 @@
         .topic-pill:hover {
             border-color: var(--accent);
             color: var(--accent);
+            cursor: pointer;
         }
+
+        /* GENERATE FORM */
+        .generate-form {
+            margin-top: 40px;
+            max-width: 520px;
+        }
+        .generate-row {
+            display: flex;
+            gap: 10px;
+        }
+        .generate-input {
+            flex: 1;
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .generate-input:focus {
+            border-color: var(--accent);
+        }
+        .generate-input::placeholder {
+            color: var(--text-muted);
+        }
+        .generate-btn {
+            padding: 16px 28px;
+            background: var(--accent);
+            color: #0a0a0a;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+        }
+        .generate-btn:hover { opacity: 0.9; }
+        .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .generate-error {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+        }
+        .generate-error.show { display: block; }
+        .generate-status {
+            margin-top: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+            display: none;
+        }
+        .generate-status.show { display: flex; align-items: center; gap: 10px; }
+        .mini-spinner {
+            width: 16px; height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .preview-card {
             background: var(--surface);
@@ -387,7 +457,7 @@
     <nav>
         <div class="container">
             <div class="logo">stumped<span>.</span></div>
-            <div class="nav-tag">Coming soon</div>
+            <div class="nav-tag">Try it free</div>
         </div>
     </nav>
 
@@ -396,6 +466,17 @@
             <div class="hero-label">AI-powered trivia</div>
             <h1>Any topic.<br>Ten questions.<br><em>One link.</em></h1>
             <p>Generate a trivia quiz on literally anything, share the link, and watch your friends try to beat each other on the leaderboard. No app. No account. Just bragging rights.</p>
+            <div class="generate-form">
+                <div class="generate-row">
+                    <input type="text" class="generate-input" id="topic-input" placeholder="Enter a topic... e.g. 90s Hip Hop" maxlength="200" autocomplete="off">
+                    <button class="generate-btn" id="generate-btn">Generate</button>
+                </div>
+                <div class="generate-error" id="generate-error"></div>
+                <div class="generate-status" id="generate-status">
+                    <div class="mini-spinner"></div>
+                    <span>Generating your quiz...</span>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -520,6 +601,67 @@
             localStorage.setItem('polsia_vid', vid);
         }
         new Image().src = 'https://polsia.com/api/beacon/pixel?s=' + encodeURIComponent(slug) + '&v=' + encodeURIComponent(vid);
+    })();
+    </script>
+
+    <!-- Quiz Generation -->
+    <script>
+    (function() {
+        const input = document.getElementById('topic-input');
+        const btn = document.getElementById('generate-btn');
+        const error = document.getElementById('generate-error');
+        const status = document.getElementById('generate-status');
+
+        // Make topic pills clickable
+        document.querySelectorAll('.topic-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                input.value = pill.textContent;
+                input.focus();
+            });
+        });
+
+        // Generate quiz
+        async function generateQuiz() {
+            const topic = input.value.trim();
+            if (!topic || topic.length < 2) {
+                error.textContent = 'Enter a topic (at least 2 characters)';
+                error.classList.add('show');
+                return;
+            }
+
+            error.classList.remove('show');
+            status.classList.add('show');
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+
+            try {
+                const res = await fetch('/api/quizzes/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to generate quiz');
+                }
+
+                // Redirect to quiz page
+                window.location.href = data.url;
+            } catch (e) {
+                error.textContent = e.message || 'Something went wrong. Please try again.';
+                error.classList.add('show');
+                status.classList.remove('show');
+                btn.disabled = false;
+                btn.textContent = 'Generate';
+            }
+        }
+
+        btn.addEventListener('click', generateQuiz);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') generateQuiz();
+        });
     })();
     </script>
 </body>
