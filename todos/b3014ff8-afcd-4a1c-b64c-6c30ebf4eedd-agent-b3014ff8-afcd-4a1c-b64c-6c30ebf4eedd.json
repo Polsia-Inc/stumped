@@ -6,12 +6,12 @@
   },
   {
     "content": "Phase 2: Backend auth system (express-session, bcrypt, signup/login/logout API)",
-    "status": "in_progress",
+    "status": "completed",
     "activeForm": "Building backend auth system"
   },
   {
     "content": "Phase 3: Auth UI pages (signup, login, nav updates with user display)",
-    "status": "pending",
+    "status": "in_progress",
     "activeForm": "Building auth UI pages"
   },
   {

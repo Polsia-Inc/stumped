@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Stumped</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-2: #1a1a1a;
+      --border: #222;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --accent: #c8ff00;
+      --accent-dim: rgba(200, 255, 0, 0.08);
+      --error: #ef4444;
+      --error-dim: rgba(239, 68, 68, 0.1);
+      --success: #22c55e;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 480px; margin: 0 auto; padding: 0 24px; }
+
+    /* NAV */
+    nav { padding: 24px 0; border-bottom: 1px solid var(--border); }
+    nav .container {
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--accent); }
+
+    /* FORM */
+    .auth-container { padding: 60px 0; }
+    .auth-header { text-align: center; margin-bottom: 40px; }
+    .auth-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+    .auth-header p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+    .auth-header a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .auth-header a:hover { text-decoration: underline; }
+
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .form-group { margin-bottom: 20px; }
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--accent); }
+    .form-input::placeholder { color: var(--text-muted); }
+
+    .password-requirements {
+      margin-top: 12px;
+      padding: 14px;
+      background: var(--surface-2);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .password-requirements .title {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .requirement {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .requirement .icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      position: relative;
+    }
+    .requirement.met {
+      color: var(--text);
+    }
+    .requirement.met .icon {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    .requirement.met .icon::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #0a0a0a;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .error-msg {
+      background: var(--error-dim);
+      color: var(--error);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      letter-spacing: -0.3px;
+    }
+    .btn-submit:hover { opacity: 0.9; }
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      .auth-container { padding: 40px 0; }
+      .auth-card { padding: 24px; }
+      .auth-header h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/" class="logo">stumped<span>.</span></a>
+    </div>
+  </nav>
+
+  <div class="auth-container">
+    <div class="container">
+      <div class="auth-header">
+        <h1>Create your account</h1>
+        <p>Already have an account? <a href="/login.html">Log in</a></p>
+      </div>
+
+      <div class="auth-card">
+        <div class="error-msg" id="error-msg"></div>
+
+        <form id="signup-form">
+          <div class="form-group">
+            <label class="form-label">Display Name</label>
+            <input type="text" class="form-input" id="displayName" placeholder="Your display name" maxlength="100" autocomplete="name" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="email" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="password" placeholder="Create a password" autocomplete="new-password" required>
+            <div class="password-requirements">
+              <div class="title">Password must contain:</div>
+              <div class="requirement" id="req-length">
+                <div class="icon"></div>
+                <span>At least 10 characters</span>
+              </div>
+              <div class="requirement" id="req-letter">
+                <div class="icon"></div>
+                <span>At least 1 letter</span>
+              </div>
+              <div class="requirement" id="req-number">
+                <div class="icon"></div>
+                <span>At least 1 number</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm your password" autocomplete="new-password" required>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-submit" disabled>Create Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    const form = document.getElementById('signup-form');
+    const displayNameInput = document.getElementById('displayName');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const btnSubmit = document.getElementById('btn-submit');
+    const errorMsg = document.getElementById('error-msg');
+
+    const requirements = {
+      length: { el: document.getElementById('req-length'), check: () => passwordInput.value.length >= 10 },
+      letter: { el: document.getElementById('req-letter'), check: () => /[a-zA-Z]/.test(passwordInput.value) },
+      number: { el: document.getElementById('req-number'), check: () => /[0-9]/.test(passwordInput.value) }
+    };
+
+    function updateRequirements() {
+      Object.values(requirements).forEach(req => {
+        if (req.check()) {
+          req.el.classList.add('met');
+        } else {
+          req.el.classList.remove('met');
+        }
+      });
+    }
+
+    function validateForm() {
+      const allReqsMet = Object.values(requirements).every(req => req.check());
+      const passwordsMatch = passwordInput.value === confirmPasswordInput.value;
+      const allFilled = displayNameInput.value.trim() && emailInput.value.trim() && passwordInput.value && confirmPasswordInput.value;
+
+      btnSubmit.disabled = !(allReqsMet && passwordsMatch && allFilled);
+    }
+
+    passwordInput.addEventListener('input', () => {
+      updateRequirements();
+      validateForm();
+    });
+
+    confirmPasswordInput.addEventListener('input', validateForm);
+    displayNameInput.addEventListener('input', validateForm);
+    emailInput.addEventListener('input', validateForm);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.classList.remove('show');
+
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        errorMsg.textContent = 'Passwords do not match';
+        errorMsg.classList.add('show');
+        return;
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Creating account...';
+
+      try {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            displayName: displayNameInput.value.trim(),
+            email: emailInput.value.trim(),
+            password: passwordInput.value
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorMsg.textContent = data.error || 'Signup failed';
+          errorMsg.classList.add('show');
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = 'Create Account';
+          return;
+        }
+
+        // Success - redirect to home or dashboard
+        window.location.href = '/';
+      } catch (err) {
+        errorMsg.textContent = 'Network error. Please try again.';
+        errorMsg.classList.add('show');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Create Account';
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

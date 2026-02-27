@@ -1051,7 +1051,7 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
   <nav class="quiz-nav">
     <div class="container">
       <a href="/" class="logo">stumped<span>.</span></a>
-      <div id="nav-info" style="font-size:13px;color:var(--text-muted);"></div>
+      <div id="nav-auth"></div>
     </div>
   </nav>
 
@@ -1128,6 +1128,34 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
   </div>
 
   <script>
+  // Auth state
+  (function() {
+    const navAuth = document.getElementById('nav-auth');
+
+    async function loadAuthState() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          navAuth.innerHTML = '<a href="/dashboard" style="font-size:13px;color:var(--text);text-decoration:none;font-weight:500;">' + escHtml(data.user.displayName) + '</a>';
+        } else {
+          navAuth.innerHTML = '<a href="/login.html" style="font-size:13px;color:var(--text-muted);text-decoration:none;">Log In</a>';
+        }
+      } catch (err) {
+        navAuth.innerHTML = '<a href="/login.html" style="font-size:13px;color:var(--text-muted);text-decoration:none;">Log In</a>';
+      }
+    }
+
+    function escHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    loadAuthState();
+  })();
+
+  // Quiz logic
   (function() {
     const slug = '${slug}';
     let quiz = null;

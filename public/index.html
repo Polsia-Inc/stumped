@@ -552,7 +552,9 @@
     <nav>
         <div class="container">
             <div class="logo">stumped<span>.</span></div>
-            <div class="nav-tag">Try it free</div>
+            <div id="nav-auth">
+                <div class="nav-tag">Loading...</div>
+            </div>
         </div>
     </nav>
 
@@ -696,6 +698,63 @@
             localStorage.setItem('polsia_vid', vid);
         }
         new Image().src = 'https://polsia.com/api/beacon/pixel?s=' + encodeURIComponent(slug) + '&v=' + encodeURIComponent(vid);
+    })();
+    </script>
+
+    <!-- Auth State -->
+    <script>
+    (function() {
+        const navAuth = document.getElementById('nav-auth');
+
+        async function loadAuthState() {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    // User is logged in
+                    navAuth.innerHTML = `
+                        <div style="display:flex;align-items:center;gap:16px;">
+                            <a href="/dashboard" style="font-size:14px;color:var(--text);text-decoration:none;font-weight:500;">${escHtml(data.user.displayName)}</a>
+                            <button id="logout-btn" style="font-size:13px;color:var(--text-muted);background:none;border:1px solid var(--border);padding:6px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;">Logout</button>
+                        </div>
+                    `;
+                    document.getElementById('logout-btn').addEventListener('click', logout);
+                } else {
+                    // User is not logged in
+                    navAuth.innerHTML = `
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <a href="/login.html" style="font-size:14px;color:var(--text);text-decoration:none;font-weight:500;">Log In</a>
+                            <a href="/signup.html" style="font-size:13px;color:#0a0a0a;background:var(--accent);padding:6px 16px;border-radius:100px;text-decoration:none;font-weight:500;">Sign Up</a>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                // Show signup/login on error
+                navAuth.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <a href="/login.html" style="font-size:14px;color:var(--text);text-decoration:none;font-weight:500;">Log In</a>
+                        <a href="/signup.html" style="font-size:13px;color:#0a0a0a;background:var(--accent);padding:6px 16px;border-radius:100px;text-decoration:none;font-weight:500;">Sign Up</a>
+                    </div>
+                `;
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.reload();
+            } catch (err) {
+                console.error('Logout failed:', err);
+            }
+        }
+
+        function escHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        loadAuthState();
     })();
     </script>
 
