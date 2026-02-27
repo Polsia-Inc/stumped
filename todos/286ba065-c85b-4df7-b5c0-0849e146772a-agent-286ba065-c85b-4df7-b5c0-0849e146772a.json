@@ -1,0 +1,27 @@
+[
+  {
+    "content": "Audit current codebase structure and identify all screens/pages",
+    "status": "completed",
+    "activeForm": "Auditing codebase structure"
+  },
+  {
+    "content": "Fix homepage/quiz creation screen for mobile",
+    "status": "completed",
+    "activeForm": "Fixing homepage mobile layout"
+  },
+  {
+    "content": "Fix quiz-taking screen (questions, timer, answer buttons)",
+    "status": "completed",
+    "activeForm": "Fixing quiz-taking mobile layout"
+  },
+  {
+    "content": "Fix results/leaderboard screen for mobile",
+    "status": "completed",
+    "activeForm": "Fixing results/leaderboard mobile layout"
+  },
+  {
+    "content": "Deploy and verify end-to-end mobile flow",
+    "status": "in_progress",
+    "activeForm": "Deploying and verifying mobile flow"
+  }
+]
