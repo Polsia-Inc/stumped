@@ -233,6 +233,79 @@ app.get('/api/auth/me', async (req, res) => {
 });
 
 // ============================================================
+// DASHBOARD API
+// ============================================================
+
+// Get user's created quizzes
+app.get('/api/dashboard/my-quizzes', async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const result = await pool.query(
+      `SELECT q.id, q.slug, q.topic, q.created_at,
+              COUNT(DISTINCT qa.id) as play_count
+       FROM quizzes q
+       LEFT JOIN quiz_attempts qa ON qa.quiz_id = q.id
+       WHERE q.created_by_user_id = $1
+       GROUP BY q.id, q.slug, q.topic, q.created_at
+       ORDER BY q.created_at DESC`,
+      [req.session.userId]
+    );
+
+    res.json({
+      quizzes: result.rows.map(row => ({
+        id: row.id,
+        slug: row.slug,
+        topic: row.topic,
+        createdAt: row.created_at,
+        playCount: parseInt(row.play_count),
+        url: `/quiz/${row.slug}`
+      }))
+    });
+  } catch (err) {
+    console.error('Get my quizzes error:', err);
+    res.status(500).json({ error: 'Failed to load quizzes' });
+  }
+});
+
+// Delete a quiz
+app.delete('/api/quizzes/:slug', async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const { slug } = req.params;
+
+    // Check ownership
+    const checkResult = await pool.query(
+      'SELECT id, created_by_user_id FROM quizzes WHERE slug = $1',
+      [slug]
+    );
+
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Quiz not found' });
+    }
+
+    const quiz = checkResult.rows[0];
+
+    if (quiz.created_by_user_id !== req.session.userId) {
+      return res.status(403).json({ error: 'You can only delete your own quizzes' });
+    }
+
+    // Delete quiz (cascade will delete questions and attempts)
+    await pool.query('DELETE FROM quizzes WHERE id = $1', [quiz.id]);
+
+    res.json({ message: 'Quiz deleted successfully' });
+  } catch (err) {
+    console.error('Delete quiz error:', err);
+    res.status(500).json({ error: 'Failed to delete quiz' });
+  }
+});
+
+// ============================================================
 // API: Generate a quiz
 // ============================================================
 app.post('/api/quizzes/generate', async (req, res) => {
@@ -301,9 +374,12 @@ Rules:
     try {
       await client.query('BEGIN');
 
+      // Link quiz to user if logged in
+      const userId = req.session.userId || null;
+
       const quizResult = await client.query(
-        'INSERT INTO quizzes (slug, topic) VALUES ($1, $2) RETURNING id, slug',
-        [slug, cleanTopic]
+        'INSERT INTO quizzes (slug, topic, created_by_user_id) VALUES ($1, $2, $3) RETURNING id, slug',
+        [slug, cleanTopic, userId]
       );
       const quizId = quizResult.rows[0].id;
 

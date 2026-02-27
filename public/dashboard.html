@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Quizzes | Stumped</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-2: #1a1a1a;
+      --border: #222;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --accent: #c8ff00;
+      --accent-dim: rgba(200, 255, 0, 0.08);
+      --error: #ef4444;
+      --error-dim: rgba(239, 68, 68, 0.1);
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+    /* NAV */
+    nav { padding: 24px 0; border-bottom: 1px solid var(--border); }
+    nav .container {
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--accent); }
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-user-name {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .btn-logout {
+      font-size: 13px;
+      color: var(--text-muted);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 100px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s;
+    }
+    .btn-logout:hover { border-color: var(--text-muted); }
+
+    /* DASHBOARD */
+    .dashboard-header {
+      padding: 48px 0 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dashboard-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+    .dashboard-header p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .dashboard-content {
+      padding: 40px 0 80px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .empty-state h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-muted);
+    }
+    .empty-state p {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-size: 15px;
+    }
+    .btn-create {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      transition: opacity 0.2s;
+    }
+    .btn-create:hover { opacity: 0.9; }
+
+    .quizzes-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .quiz-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      transition: border-color 0.2s;
+    }
+    .quiz-card:hover { border-color: rgba(200, 255, 0, 0.3); }
+
+    .quiz-info { flex: 1; min-width: 0; }
+    .quiz-topic {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .quiz-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .quiz-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quiz-actions {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .btn-action {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-view {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-view:hover { border-color: var(--accent); }
+    .btn-copy {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(200, 255, 0, 0.15);
+    }
+    .btn-copy:hover { background: rgba(200, 255, 0, 0.12); }
+    .btn-delete {
+      background: var(--error-dim);
+      color: var(--error);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+    }
+    .btn-delete:hover { background: rgba(239, 68, 68, 0.15); }
+
+    .loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-muted);
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .container { padding: 0 20px; }
+      .dashboard-header { padding: 32px 0 24px; }
+      .dashboard-header h1 { font-size: 28px; }
+      .dashboard-content { padding: 32px 0 64px; }
+      .quiz-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .quiz-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .btn-action { flex: 1; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      nav { padding: 16px 0; }
+      .logo { font-size: 20px; }
+      .nav-user { gap: 12px; }
+      .nav-user-name { font-size: 13px; }
+      .dashboard-header { padding: 24px 0 20px; }
+      .dashboard-header h1 { font-size: 24px; }
+      .quiz-topic { font-size: 16px; }
+      .quiz-meta { flex-direction: column; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/" class="logo">stumped<span>.</span></a>
+      <div id="nav-user" class="nav-user"></div>
+    </div>
+  </nav>
+
+  <div class="dashboard-header">
+    <div class="container">
+      <h1>My Quizzes</h1>
+      <p>All the quizzes you've created</p>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="container">
+      <div id="loading" class="loading">Loading your quizzes...</div>
+      <div id="empty-state" class="empty-state" style="display:none;">
+        <h2>No quizzes yet</h2>
+        <p>Create your first quiz and share it with friends</p>
+        <a href="/" class="btn-create">Create Quiz</a>
+      </div>
+      <div id="quizzes-grid" class="quizzes-grid" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    const navUser = document.getElementById('nav-user');
+    const loading = document.getElementById('loading');
+    const emptyState = document.getElementById('empty-state');
+    const quizzesGrid = document.getElementById('quizzes-grid');
+    let currentUser = null;
+
+    async function loadUser() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) {
+          window.location.href = '/login.html';
+          return;
+        }
+        const data = await res.json();
+        currentUser = data.user;
+        navUser.innerHTML = `
+          <span class="nav-user-name">${escHtml(currentUser.displayName)}</span>
+          <button class="btn-logout" id="logout-btn">Logout</button>
+        `;
+        document.getElementById('logout-btn').addEventListener('click', logout);
+      } catch (err) {
+        window.location.href = '/login.html';
+      }
+    }
+
+    async function loadQuizzes() {
+      try {
+        const res = await fetch('/api/dashboard/my-quizzes');
+        const data = await res.json();
+
+        loading.style.display = 'none';
+
+        if (data.quizzes.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        quizzesGrid.style.display = 'grid';
+        quizzesGrid.innerHTML = data.quizzes.map(quiz => `
+          <div class="quiz-card">
+            <div class="quiz-info">
+              <div class="quiz-topic">${escHtml(quiz.topic)}</div>
+              <div class="quiz-meta">
+                <span>🎯 ${quiz.playCount} ${quiz.playCount === 1 ? 'play' : 'plays'}</span>
+                <span>📅 ${formatDate(quiz.createdAt)}</span>
+              </div>
+            </div>
+            <div class="quiz-actions">
+              <a href="${quiz.url}" class="btn-action btn-view">View</a>
+              <button class="btn-action btn-copy" data-url="${window.location.origin}${quiz.url}">Copy Link</button>
+              <button class="btn-action btn-delete" data-slug="${quiz.slug}">Delete</button>
+            </div>
+          </div>
+        `).join('');
+
+        // Add event listeners
+        document.querySelectorAll('.btn-copy').forEach(btn => {
+          btn.addEventListener('click', () => copyLink(btn, btn.dataset.url));
+        });
+
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', () => deleteQuiz(btn.dataset.slug));
+        });
+      } catch (err) {
+        loading.textContent = 'Failed to load quizzes. Please refresh.';
+      }
+    }
+
+    async function copyLink(btn, url) {
+      try {
+        await navigator.clipboard.writeText(url);
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = originalText; }, 2000);
+      } catch (err) {
+        alert('Failed to copy link');
+      }
+    }
+
+    async function deleteQuiz(slug) {
+      if (!confirm('Are you sure you want to delete this quiz? This cannot be undone.')) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/quizzes/${slug}`, { method: 'DELETE' });
+        if (!res.ok) {
+          throw new Error('Failed to delete');
+        }
+        loadQuizzes(); // Reload the list
+      } catch (err) {
+        alert('Failed to delete quiz. Please try again.');
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/';
+      } catch (err) {
+        console.error('Logout failed:', err);
+      }
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffDays < 7) return `${diffDays}d ago`;
+      return date.toLocaleDateString();
+    }
+
+    function escHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    loadUser();
+    loadQuizzes();
+  })();
+  </script>
+</body>
+</html>

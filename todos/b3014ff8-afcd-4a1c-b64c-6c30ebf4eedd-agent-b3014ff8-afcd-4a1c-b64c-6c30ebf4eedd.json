@@ -11,13 +11,18 @@
   },
   {
     "content": "Phase 3: Auth UI pages (signup, login, nav updates with user display)",
-    "status": "in_progress",
+    "status": "completed",
     "activeForm": "Building auth UI pages"
   },
   {
-    "content": "Phase 4: Google OAuth integration",
+    "content": "Phase 6: My Quizzes dashboard (/dashboard page showing created quizzes)",
+    "status": "in_progress",
+    "activeForm": "Building My Quizzes dashboard"
+  },
+  {
+    "content": "Phase 7: Quiz history tracking and leaderboard integration",
     "status": "pending",
-    "activeForm": "Integrating Google OAuth"
+    "activeForm": "Building quiz history and leaderboard integration"
   },
   {
     "content": "Phase 5: User profiles system (display name, avatar, public /u/username page)",
@@ -25,14 +30,9 @@
     "activeForm": "Building user profile system"
   },
   {
-    "content": "Phase 6: My Quizzes dashboard (/dashboard page showing created quizzes)",
+    "content": "Phase 4: Google OAuth integration",
     "status": "pending",
-    "activeForm": "Building My Quizzes dashboard"
-  },
-  {
-    "content": "Phase 7: Quiz history tracking and leaderboard integration",
-    "status": "pending",
-    "activeForm": "Building quiz history and leaderboard integration"
+    "activeForm": "Integrating Google OAuth"
   },
   {
     "content": "Phase 8: Anonymous quiz claiming system",
