@@ -1,0 +1,27 @@
+[
+  {
+    "content": "Phase 1: Database schema + API endpoints (generate quiz, get quiz, submit answers, leaderboard)",
+    "status": "completed",
+    "activeForm": "Building database schema and API endpoints"
+  },
+  {
+    "content": "Phase 2: Landing page integration — add quiz creation form to homepage",
+    "status": "completed",
+    "activeForm": "Adding quiz creation form to landing page"
+  },
+  {
+    "content": "Phase 3: Quiz-taking UI — one question at a time, 30s timer, answer selection",
+    "status": "completed",
+    "activeForm": "Building quiz-taking UI with timer"
+  },
+  {
+    "content": "Phase 4: Results page + leaderboard + shareable links with OG tags",
+    "status": "completed",
+    "activeForm": "Building results, leaderboard, and sharing"
+  },
+  {
+    "content": "Phase 5: Deploy and verify end-to-end flow",
+    "status": "in_progress",
+    "activeForm": "Deploying and verifying the complete flow"
+  }
+]
