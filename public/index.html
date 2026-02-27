@@ -3,38 +3,514 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+    <title>Stumped - Generate trivia on any topic. Challenge your friends.</title>
+    <meta name="description" content="Generate AI trivia quizzes on any topic instantly. Share a link. See who knows the most.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface-2: #1a1a1a;
+            --border: #222;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --accent: #c8ff00;
+            --accent-dim: rgba(200, 255, 0, 0.08);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: #fafafa;
-            color: #1a1a1a;
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
+
         .container {
-            text-align: center;
-            padding: 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
-        h1 { font-size: 2rem; margin-bottom: 16px; }
-        p { color: #666; font-size: 1.1rem; }
+
+        /* NAV */
+        nav {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+        .logo span {
+            color: var(--accent);
+        }
+        .nav-tag {
+            font-size: 13px;
+            color: var(--text-muted);
+            background: var(--surface);
+            padding: 6px 14px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+        }
+
+        /* HERO */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: left;
+        }
+        .hero-label {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 6px 16px;
+            border-radius: 100px;
+            border: 1px solid rgba(200, 255, 0, 0.15);
+            margin-bottom: 32px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(44px, 7vw, 80px);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 28px;
+            max-width: 750px;
+        }
+        .hero h1 em {
+            font-style: normal;
+            color: var(--accent);
+        }
+        .hero p {
+            font-size: 19px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 520px;
+        }
+
+        /* DEMO STRIP */
+        .demo-strip {
+            padding: 0 0 100px;
+        }
+        .demo-flow {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .demo-step {
+            background: var(--surface);
+            padding: 48px 36px;
+            position: relative;
+        }
+        .demo-step .step-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 64px;
+            font-weight: 700;
+            color: var(--accent);
+            opacity: 0.15;
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            line-height: 1;
+        }
+        .demo-step h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+        .demo-step p {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        /* QUIZ PREVIEW */
+        .preview-section {
+            padding: 0 0 100px;
+        }
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+        .preview-text h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+        .preview-text p {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.65;
+            margin-bottom: 28px;
+        }
+        .topic-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .topic-pill {
+            padding: 8px 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 14px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .topic-pill:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .preview-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .preview-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .preview-card-header span {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .preview-timer {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+        .preview-card-body {
+            padding: 32px 24px;
+        }
+        .preview-question {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        .preview-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .preview-option {
+            padding: 14px 18px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .preview-option.selected {
+            border-color: var(--accent);
+            color: var(--text);
+            background: var(--accent-dim);
+        }
+        .preview-progress {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .progress-bar-bg {
+            flex: 1;
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0 16px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 40%;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* FEATURES */
+        .features {
+            padding: 0 0 100px;
+        }
+        .features-header {
+            margin-bottom: 48px;
+        }
+        .features-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+        .features-header p {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+            background: var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .feature-card {
+            background: var(--surface);
+            padding: 40px 36px;
+        }
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .feature-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: -0.2px;
+        }
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* CLOSING */
+        .closing {
+            padding: 80px 0 120px;
+            text-align: center;
+        }
+        .closing h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        .closing h2 em {
+            font-style: normal;
+            color: var(--accent);
+        }
+        .closing p {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+        }
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        footer p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 80px 0 60px;
+            }
+            .demo-flow {
+                grid-template-columns: 1fr;
+            }
+            .preview-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .demo-step {
+                padding: 32px 24px;
+            }
+            .feature-card {
+                padding: 32px 24px;
+            }
+            footer .container {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to your app</h1>
-        <p>Built with Polsia</p>
-    </div>
 
-    <!-- Polsia Analytics - tracks page views for your dashboard -->
+    <nav>
+        <div class="container">
+            <div class="logo">stumped<span>.</span></div>
+            <div class="nav-tag">Coming soon</div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-label">AI-powered trivia</div>
+            <h1>Any topic.<br>Ten questions.<br><em>One link.</em></h1>
+            <p>Generate a trivia quiz on literally anything, share the link, and watch your friends try to beat each other on the leaderboard. No app. No account. Just bragging rights.</p>
+        </div>
+    </section>
+
+    <section class="demo-strip">
+        <div class="container">
+            <div class="demo-flow">
+                <div class="demo-step">
+                    <span class="step-num">1</span>
+                    <h3>Type a topic</h3>
+                    <p>"90s hip hop," "The Office season 3," "World War II battles." Anything you can think of.</p>
+                </div>
+                <div class="demo-step">
+                    <span class="step-num">2</span>
+                    <h3>Drop the link</h3>
+                    <p>AI generates 10 questions instantly. Preview them, tweak what you want, publish, and share stumped.gg/q/your-quiz.</p>
+                </div>
+                <div class="demo-step">
+                    <span class="step-num">3</span>
+                    <h3>Watch the scoreboard</h3>
+                    <p>Friends compete for the top spot. Every quiz has a live leaderboard. Talk trash accordingly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="preview-section">
+        <div class="container">
+            <div class="preview-grid">
+                <div class="preview-text">
+                    <h2>Quizzes that feel like texting, not homework</h2>
+                    <p>Stumped is built for group chats, not classrooms. Mobile-first, minimal, fast. The kind of thing you open from an iMessage link and can't put down until you finish all ten questions.</p>
+                    <div class="topic-pills">
+                        <span class="topic-pill">90s Hip Hop</span>
+                        <span class="topic-pill">Celtics 2024</span>
+                        <span class="topic-pill">The Office</span>
+                        <span class="topic-pill">World Capitals</span>
+                        <span class="topic-pill">Marvel Movies</span>
+                        <span class="topic-pill">Taylor Swift</span>
+                    </div>
+                </div>
+                <div class="preview-card">
+                    <div class="preview-card-header">
+                        <span>90s Hip Hop</span>
+                        <span class="preview-timer">0:24</span>
+                    </div>
+                    <div class="preview-card-body">
+                        <div class="preview-question">Which rapper released the album "Ready to Die" in 1994?</div>
+                        <div class="preview-options">
+                            <div class="preview-option">Nas</div>
+                            <div class="preview-option selected">The Notorious B.I.G.</div>
+                            <div class="preview-option">Tupac Shakur</div>
+                            <div class="preview-option">Jay-Z</div>
+                        </div>
+                    </div>
+                    <div class="preview-progress">
+                        <span>4/10</span>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill"></div></div>
+                        <span>6 left</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="features-header">
+                <h2>Built different</h2>
+                <p>Not another Kahoot clone.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">&#9889;</span>
+                    <h3>Instant generation</h3>
+                    <p>Type a topic, get 10 questions in seconds. AI handles the hard part. You just pick what's interesting.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">&#128279;</span>
+                    <h3>One link to share</h3>
+                    <p>Every quiz gets a unique URL. Drop it in your group chat, tweet it, text it. Rich previews included.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">&#127942;</span>
+                    <h3>Persistent leaderboard</h3>
+                    <p>Everyone who takes a quiz sees where they rank. Come back later and check if someone beat your score.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">&#128274;</span>
+                    <h3>No accounts needed</h3>
+                    <p>Enter a display name and play. That's it. Zero friction between opening the link and answering questions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="closing">
+        <div class="container">
+            <h2>Trivia should be <em>social</em>,<br>not educational</h2>
+            <p>Stumped is for the group chat. For the person who won't stop talking about how much they know about 90s sitcoms. For proving it.</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>Stumped</p>
+            <p>stumped.gg</p>
+        </div>
+    </footer>
+
+
+    <!-- Polsia Analytics -->
     <script>
     (function() {
         var slug = '__POLSIA_SLUG__';
-        if (!slug || slug === '__POLSIA_' + 'SLUG__') return;
-
+        if (!slug) return;
         var vid = localStorage.getItem('polsia_vid');
         if (!vid) {
             vid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
