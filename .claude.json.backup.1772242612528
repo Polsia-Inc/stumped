@@ -4,5 +4,9 @@
   "opus45MigrationComplete": true,
   "opusProMigrationComplete": true,
   "thinkingMigrationComplete": true,
-  "userID": "b2dba6de36247cf9943fd0c6ec0305221b1e147622ba53adcb5db4eecc2957ff"
+  "userID": "b2dba6de36247cf9943fd0c6ec0305221b1e147622ba53adcb5db4eecc2957ff",
+  "clientDataCache": {
+    "data": null,
+    "timestamp": 1772241515449
+  }
 }
