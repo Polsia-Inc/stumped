@@ -143,12 +143,20 @@ app.post('/api/auth/signup', async (req, res) => {
     // Set session
     req.session.userId = user.id;
 
-    res.json({
-      user: {
-        id: user.id,
-        email: user.email,
-        displayName: user.display_name
+    // Save session before responding (ensures cookie is set)
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).json({ error: 'Signup failed. Please try again.' });
       }
+
+      res.json({
+        user: {
+          id: user.id,
+          email: user.email,
+          displayName: user.display_name
+        }
+      });
     });
   } catch (err) {
     console.error('Signup error:', err);
@@ -189,12 +197,20 @@ app.post('/api/auth/login', async (req, res) => {
     // Set session
     req.session.userId = user.id;
 
-    res.json({
-      user: {
-        id: user.id,
-        email: user.email,
-        displayName: user.display_name
+    // Save session before responding (ensures cookie is set)
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).json({ error: 'Login failed. Please try again.' });
       }
+
+      res.json({
+        user: {
+          id: user.id,
+          email: user.email,
+          displayName: user.display_name
+        }
+      });
     });
   } catch (err) {
     console.error('Login error:', err);
