@@ -66,6 +66,14 @@ function generateSlug() {
   return crypto.randomBytes(4).toString('hex'); // 8 char hex slug
 }
 
+// Admin authentication middleware
+function requireAdmin(req, res, next) {
+  if (req.session.isAdmin) {
+    return next();
+  }
+  res.status(401).json({ error: 'Admin access required' });
+}
+
 // Check if user has active Pro subscription
 function isProActive(user) {
   if (!user.pro) return false;
@@ -914,6 +922,164 @@ app.post('/api/profile/update', async (req, res) => {
 });
 
 // ============================================================
+// ADMIN API
+// ============================================================
+
+// Admin login
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ error: 'Password is required' });
+    }
+
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+    if (password !== adminPassword) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+
+    // Set admin session
+    req.session.isAdmin = true;
+
+    req.session.save((err) => {
+      if (err) {
+        console.error('Admin session save error:', err);
+        return res.status(500).json({ error: 'Login failed. Please try again.' });
+      }
+
+      res.json({ success: true });
+    });
+  } catch (err) {
+    console.error('Admin login error:', err);
+    res.status(500).json({ error: 'Login failed. Please try again.' });
+  }
+});
+
+// Admin logout
+app.post('/api/admin/logout', (req, res) => {
+  req.session.isAdmin = false;
+  req.session.save((err) => {
+    if (err) {
+      console.error('Admin logout error:', err);
+      return res.status(500).json({ error: 'Logout failed' });
+    }
+    res.json({ message: 'Logged out successfully' });
+  });
+});
+
+// Get admin dashboard data
+app.get('/api/admin/dashboard', requireAdmin, async (req, res) => {
+  try {
+    // User metrics
+    const totalUsersResult = await pool.query('SELECT COUNT(*) as count FROM users');
+    const totalUsers = parseInt(totalUsersResult.rows[0].count);
+
+    const proUsersResult = await pool.query(
+      'SELECT COUNT(*) as count FROM users WHERE pro = TRUE AND (pro_expires IS NULL OR pro_expires > NOW())'
+    );
+    const proUsers = parseInt(proUsersResult.rows[0].count);
+
+    // Signups over time (last 30 days, grouped by day)
+    const signupsOverTimeResult = await pool.query(`
+      SELECT
+        DATE(created_at) as date,
+        COUNT(*) as count
+      FROM users
+      WHERE created_at >= NOW() - INTERVAL '30 days'
+      GROUP BY DATE(created_at)
+      ORDER BY date DESC
+    `);
+
+    // Quiz metrics
+    const totalQuizzesResult = await pool.query('SELECT COUNT(*) as count FROM quizzes');
+    const totalQuizzes = parseInt(totalQuizzesResult.rows[0].count);
+
+    const totalAttemptsResult = await pool.query('SELECT COUNT(*) as count FROM quiz_attempts');
+    const totalAttempts = parseInt(totalAttemptsResult.rows[0].count);
+
+    const avgScoreResult = await pool.query(`
+      SELECT AVG(score::float / total_questions * 100) as avg_score
+      FROM quiz_attempts
+      WHERE total_questions > 0
+    `);
+    const avgScore = avgScoreResult.rows[0].avg_score
+      ? Math.round(parseFloat(avgScoreResult.rows[0].avg_score))
+      : 0;
+
+    // Most popular quizzes
+    const popularQuizzesResult = await pool.query(`
+      SELECT
+        q.slug,
+        q.topic,
+        COUNT(qa.id) as play_count,
+        u.display_name as creator
+      FROM quizzes q
+      LEFT JOIN quiz_attempts qa ON qa.quiz_id = q.id
+      LEFT JOIN users u ON u.id = q.created_by_user_id
+      GROUP BY q.id, q.slug, q.topic, u.display_name
+      ORDER BY play_count DESC
+      LIMIT 10
+    `);
+
+    // Quizzes created over time (last 30 days)
+    const quizzesOverTimeResult = await pool.query(`
+      SELECT
+        DATE(created_at) as date,
+        COUNT(*) as count
+      FROM quizzes
+      WHERE created_at >= NOW() - INTERVAL '30 days'
+      GROUP BY DATE(created_at)
+      ORDER BY date DESC
+    `);
+
+    // System health
+    const dbHealthResult = await pool.query('SELECT NOW()');
+    const dbHealthy = dbHealthResult.rows.length > 0;
+
+    res.json({
+      users: {
+        total: totalUsers,
+        pro: proUsers,
+        free: totalUsers - proUsers,
+        signupsOverTime: signupsOverTimeResult.rows.map(row => ({
+          date: row.date,
+          count: parseInt(row.count)
+        }))
+      },
+      quizzes: {
+        total: totalQuizzes,
+        totalAttempts,
+        avgScore,
+        popular: popularQuizzesResult.rows.map(row => ({
+          slug: row.slug,
+          topic: row.topic,
+          playCount: parseInt(row.play_count),
+          creator: row.creator || 'Anonymous'
+        })),
+        createdOverTime: quizzesOverTimeResult.rows.map(row => ({
+          date: row.date,
+          count: parseInt(row.count)
+        }))
+      },
+      system: {
+        dbHealthy,
+        uptime: Math.round(process.uptime()),
+        nodeVersion: process.version,
+        memoryUsage: {
+          used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+          total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024)
+        }
+      }
+    });
+  } catch (err) {
+    console.error('Admin dashboard error:', err);
+    res.status(500).json({ error: 'Failed to load dashboard data' });
+  }
+});
+
+// ============================================================
 // PAGES: Quiz page with OG meta tags
 // ============================================================
 app.get('/quiz/:slug', async (req, res) => {
@@ -961,6 +1127,15 @@ app.get('/pricing', (req, res) => {
 // Explore page
 app.get('/explore', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'explore.html'));
+});
+
+// Admin pages
+app.get('/admin/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 // ============================================================

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Stumped</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-2: #1a1a1a;
+      --border: #222;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --accent: #c8ff00;
+      --accent-dim: rgba(200, 255, 0, 0.08);
+      --correct: #22c55e;
+      --correct-dim: rgba(34, 197, 94, 0.1);
+    }
+    body {
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    .header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+    .logo-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn-secondary {
+      padding: 8px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-secondary:hover {
+      background: var(--surface-2);
+      border-color: var(--accent);
+    }
+
+    /* Main */
+    .main {
+      padding: 32px 0 80px;
+    }
+    .page-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 24px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -1px;
+    }
+    .stat-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 48px;
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      margin-bottom: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    /* Table */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table thead {
+      border-bottom: 1px solid var(--border);
+    }
+    .table th {
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 16px;
+      font-weight: 500;
+    }
+    .table td {
+      padding: 14px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .table tbody tr:hover {
+      background: rgba(200, 255, 0, 0.03);
+    }
+    .table-link {
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .table-link:hover {
+      opacity: 0.8;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-success {
+      background: var(--correct-dim);
+      color: var(--correct);
+    }
+
+    /* Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .timeline-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .timeline-item:last-child {
+      border-bottom: none;
+    }
+    .timeline-date {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .timeline-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 80px 0;
+    }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .table {
+        font-size: 13px;
+      }
+      .table th,
+      .table td {
+        padding: 10px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div>
+          <span class="logo">stumped<span>.</span> <span class="logo-subtitle">Admin Dashboard</span></span>
+        </div>
+        <div class="header-actions">
+          <a href="/" class="btn-secondary">View Site</a>
+          <button id="btn-logout" class="btn-secondary">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="container">
+      <!-- Loading -->
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading dashboard...</div>
+      </div>
+
+      <!-- Dashboard content (hidden until loaded) -->
+      <div id="dashboard-content" style="display: none;">
+        <h1 class="page-title">Dashboard Overview</h1>
+
+        <!-- User Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value" id="stat-total-users">0</div>
+            <div class="stat-meta" id="stat-user-breakdown"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pro Subscribers</div>
+            <div class="stat-value" id="stat-pro-users">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Quizzes</div>
+            <div class="stat-value" id="stat-total-quizzes">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Plays</div>
+            <div class="stat-value" id="stat-total-attempts">0</div>
+            <div class="stat-meta" id="stat-avg-score"></div>
+          </div>
+        </div>
+
+        <!-- Recent Signups -->
+        <div class="section">
+          <h2 class="section-title">Recent Signups (Last 30 Days)</h2>
+          <div class="card">
+            <div class="timeline" id="signups-timeline"></div>
+          </div>
+        </div>
+
+        <!-- Popular Quizzes -->
+        <div class="section">
+          <h2 class="section-title">Most Popular Quizzes</h2>
+          <div class="card">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Topic</th>
+                  <th>Creator</th>
+                  <th>Plays</th>
+                  <th>Link</th>
+                </tr>
+              </thead>
+              <tbody id="popular-quizzes-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Quiz Creation Activity -->
+        <div class="section">
+          <h2 class="section-title">Quiz Creation Activity (Last 30 Days)</h2>
+          <div class="card">
+            <div class="timeline" id="quizzes-timeline"></div>
+          </div>
+        </div>
+
+        <!-- System Health -->
+        <div class="section">
+          <h2 class="section-title">System Health</h2>
+          <div class="card">
+            <table class="table">
+              <tbody id="system-health-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Check auth and load dashboard
+    (async function() {
+      try {
+        const res = await fetch('/api/admin/dashboard');
+
+        if (res.status === 401) {
+          window.location.href = '/admin/login';
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error('Failed to load dashboard');
+        }
+
+        const data = await res.json();
+        renderDashboard(data);
+
+        // Show content, hide loading
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('dashboard-content').style.display = 'block';
+      } catch (err) {
+        console.error('Dashboard error:', err);
+        document.querySelector('.loading-text').textContent = 'Failed to load dashboard. Please refresh.';
+      }
+    })();
+
+    function renderDashboard(data) {
+      // User stats
+      document.getElementById('stat-total-users').textContent = data.users.total.toLocaleString();
+      document.getElementById('stat-user-breakdown').textContent =
+        `${data.users.free} free, ${data.users.pro} pro`;
+      document.getElementById('stat-pro-users').textContent = data.users.pro.toLocaleString();
+
+      // Quiz stats
+      document.getElementById('stat-total-quizzes').textContent = data.quizzes.total.toLocaleString();
+      document.getElementById('stat-total-attempts').textContent = data.quizzes.totalAttempts.toLocaleString();
+      document.getElementById('stat-avg-score').textContent = `Avg score: ${data.quizzes.avgScore}%`;
+
+      // Signups timeline
+      const signupsTimeline = document.getElementById('signups-timeline');
+      if (data.users.signupsOverTime.length === 0) {
+        signupsTimeline.innerHTML = '<div class="empty-state">No recent signups</div>';
+      } else {
+        signupsTimeline.innerHTML = data.users.signupsOverTime
+          .map(item => `
+            <div class="timeline-item">
+              <span class="timeline-date">${formatDate(item.date)}</span>
+              <span class="timeline-value">${item.count} ${item.count === 1 ? 'signup' : 'signups'}</span>
+            </div>
+          `)
+          .join('');
+      }
+
+      // Popular quizzes
+      const popularQuizzesTable = document.getElementById('popular-quizzes-table');
+      if (data.quizzes.popular.length === 0) {
+        popularQuizzesTable.innerHTML = '<tr><td colspan="4"><div class="empty-state">No quizzes yet</div></td></tr>';
+      } else {
+        popularQuizzesTable.innerHTML = data.quizzes.popular
+          .map(quiz => `
+            <tr>
+              <td><strong>${escapeHtml(quiz.topic)}</strong></td>
+              <td>${escapeHtml(quiz.creator)}</td>
+              <td>${quiz.playCount.toLocaleString()}</td>
+              <td><a href="/quiz/${quiz.slug}" class="table-link" target="_blank">View →</a></td>
+            </tr>
+          `)
+          .join('');
+      }
+
+      // Quizzes timeline
+      const quizzesTimeline = document.getElementById('quizzes-timeline');
+      if (data.quizzes.createdOverTime.length === 0) {
+        quizzesTimeline.innerHTML = '<div class="empty-state">No quizzes created recently</div>';
+      } else {
+        quizzesTimeline.innerHTML = data.quizzes.createdOverTime
+          .map(item => `
+            <div class="timeline-item">
+              <span class="timeline-date">${formatDate(item.date)}</span>
+              <span class="timeline-value">${item.count} ${item.count === 1 ? 'quiz' : 'quizzes'}</span>
+            </div>
+          `)
+          .join('');
+      }
+
+      // System health
+      const systemHealthTable = document.getElementById('system-health-table');
+      systemHealthTable.innerHTML = `
+        <tr>
+          <td><strong>Database Status</strong></td>
+          <td>
+            ${data.system.dbHealthy
+              ? '<span class="badge badge-success">Healthy</span>'
+              : '<span class="badge badge-error">Error</span>'}
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Uptime</strong></td>
+          <td>${formatUptime(data.system.uptime)}</td>
+        </tr>
+        <tr>
+          <td><strong>Node Version</strong></td>
+          <td>${data.system.nodeVersion}</td>
+        </tr>
+        <tr>
+          <td><strong>Memory Usage</strong></td>
+          <td>${data.system.memoryUsage.used} MB / ${data.system.memoryUsage.total} MB</td>
+        </tr>
+      `;
+    }
+
+    // Logout
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      try {
+        await fetch('/api/admin/logout', { method: 'POST' });
+        window.location.href = '/admin/login';
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
+    });
+
+    // Utilities
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return 'Today';
+      if (diffDays === 1) return 'Yesterday';
+      if (diffDays < 7) return `${diffDays} days ago`;
+
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function formatUptime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+
+      if (days > 0) return `${days}d ${hours}h`;
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      return `${minutes}m`;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
