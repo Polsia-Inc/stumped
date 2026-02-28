@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Quizzes | Stumped</title>
+    <meta name="description" content="Browse and play trivia quizzes on any topic. Challenge yourself and climb the leaderboards.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface-2: #1a1a1a;
+            --border: #222;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --accent: #c8ff00;
+            --accent-dim: rgba(200, 255, 0, 0.08);
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* NAV */
+        nav {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .logo span {
+            color: var(--accent);
+        }
+        .nav-auth {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .nav-link {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--text);
+        }
+        .nav-link.active {
+            color: var(--accent);
+        }
+
+        /* HEADER */
+        .explore-header {
+            padding: 48px 0 32px;
+        }
+        .explore-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            margin-bottom: 12px;
+        }
+        .explore-subtitle {
+            font-size: 17px;
+            color: var(--text-muted);
+        }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 80px 0;
+        }
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* QUIZ GRID */
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            padding-bottom: 80px;
+        }
+
+        .quiz-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .quiz-card:hover {
+            border-color: var(--accent);
+            background: var(--surface-2);
+        }
+
+        .quiz-topic {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .quiz-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .quiz-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quiz-meta-divider {
+            width: 2px;
+            height: 12px;
+            background: var(--border);
+        }
+
+        .quiz-play-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: var(--accent);
+            color: #0a0a0a;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            letter-spacing: -0.2px;
+        }
+        .quiz-play-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 80px 0;
+        }
+        .empty-state h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+        .empty-state a {
+            display: inline-block;
+            padding: 14px 28px;
+            background: var(--accent);
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+        }
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        footer p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* MOBILE — Tablet */
+        @media (max-width: 768px) {
+            .container { padding: 0 20px; }
+            .explore-header { padding: 36px 0 28px; }
+            .explore-title { font-size: 32px; }
+            .explore-subtitle { font-size: 16px; }
+            .quiz-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 16px;
+                padding-bottom: 64px;
+            }
+            footer .container {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+        }
+
+        /* MOBILE — Phone */
+        @media (max-width: 480px) {
+            .container { padding: 0 16px; }
+            nav { padding: 16px 0; }
+            .logo { font-size: 20px; }
+            .nav-auth { gap: 12px; }
+            .nav-link { font-size: 13px; }
+            .explore-header { padding: 28px 0 24px; }
+            .explore-title { font-size: 28px; letter-spacing: -1px; }
+            .explore-subtitle { font-size: 15px; }
+            .quiz-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+                padding-bottom: 48px;
+            }
+            .quiz-card { padding: 20px; }
+            .quiz-topic { font-size: 18px; }
+            .quiz-meta { font-size: 12px; gap: 10px; }
+            .quiz-play-btn { padding: 14px 20px; min-height: 48px; }
+            .empty-state { padding: 60px 0; }
+            .empty-state h3 { font-size: 20px; }
+            .empty-state p { font-size: 15px; }
+            footer { padding: 24px 0; }
+        }
+
+        /* Extra small phones (375px — iPhone SE) */
+        @media (max-width: 375px) {
+            .container { padding: 0 12px; }
+            .explore-title { font-size: 24px; }
+            .quiz-topic { font-size: 17px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">stumped<span>.</span></a>
+            <div class="nav-auth">
+                <a href="/explore" class="nav-link active">Explore</a>
+                <div id="nav-auth-user"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="explore-header">
+        <div class="container">
+            <h1 class="explore-title">Explore Quizzes</h1>
+            <p class="explore-subtitle">Browse quizzes, challenge yourself, and climb the leaderboards.</p>
+        </div>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div id="loading-section" class="container">
+        <div class="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading quizzes...</div>
+        </div>
+    </div>
+
+    <!-- QUIZ GRID -->
+    <div id="quiz-section" class="container" style="display: none;">
+        <div class="quiz-grid" id="quiz-grid"></div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="empty-section" class="container" style="display: none;">
+        <div class="empty-state">
+            <h3>No quizzes yet</h3>
+            <p>Be the first to create one!</p>
+            <a href="/">Create a Quiz</a>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Stumped</p>
+            <p>stumped.gg</p>
+        </div>
+    </footer>
+
+    <!-- Polsia Analytics -->
+    <script>
+    (function() {
+        var slug = 'stumped';
+        if (!slug) return;
+        var vid = localStorage.getItem('polsia_vid');
+        if (!vid) {
+            vid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            localStorage.setItem('polsia_vid', vid);
+        }
+        new Image().src = 'https://polsia.com/api/beacon/pixel?s=' + encodeURIComponent(slug) + '&v=' + encodeURIComponent(vid);
+    })();
+    </script>
+
+    <!-- Auth State -->
+    <script>
+    (function() {
+        const navAuthUser = document.getElementById('nav-auth-user');
+
+        async function loadAuthState() {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    navAuthUser.innerHTML = `
+                        <a href="/dashboard" style="font-size:14px;color:var(--text);text-decoration:none;font-weight:500;">${escHtml(data.user.displayName)}</a>
+                    `;
+                } else {
+                    navAuthUser.innerHTML = `
+                        <a href="/login.html" style="font-size:14px;color:var(--text-muted);text-decoration:none;">Log In</a>
+                    `;
+                }
+            } catch (err) {
+                navAuthUser.innerHTML = `
+                    <a href="/login.html" style="font-size:14px;color:var(--text-muted);text-decoration:none;">Log In</a>
+                `;
+            }
+        }
+
+        function escHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        loadAuthState();
+    })();
+    </script>
+
+    <!-- Load Quizzes -->
+    <script>
+    (function() {
+        const loadingSection = document.getElementById('loading-section');
+        const quizSection = document.getElementById('quiz-section');
+        const emptySection = document.getElementById('empty-section');
+        const quizGrid = document.getElementById('quiz-grid');
+
+        async function loadQuizzes() {
+            try {
+                const res = await fetch('/api/explore');
+                const data = await res.json();
+
+                loadingSection.style.display = 'none';
+
+                if (!data.quizzes || data.quizzes.length === 0) {
+                    emptySection.style.display = 'block';
+                    return;
+                }
+
+                // Show quiz grid
+                quizSection.style.display = 'block';
+
+                // Render quiz cards
+                data.quizzes.forEach(quiz => {
+                    const card = document.createElement('div');
+                    card.className = 'quiz-card';
+                    card.onclick = () => window.location.href = quiz.url;
+
+                    const playCountText = quiz.playCount === 1 ? '1 play' : `${quiz.playCount} plays`;
+
+                    card.innerHTML = `
+                        <div class="quiz-topic">${escHtml(quiz.topic)}</div>
+                        <div class="quiz-meta">
+                            <div class="quiz-meta-item">
+                                👤 ${escHtml(quiz.creatorName)}
+                            </div>
+                            <div class="quiz-meta-divider"></div>
+                            <div class="quiz-meta-item">
+                                🎮 ${playCountText}
+                            </div>
+                        </div>
+                        <button class="quiz-play-btn">Play Quiz</button>
+                    `;
+
+                    quizGrid.appendChild(card);
+                });
+            } catch (err) {
+                console.error('Failed to load quizzes:', err);
+                loadingSection.style.display = 'none';
+                emptySection.style.display = 'block';
+            }
+        }
+
+        function escHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        loadQuizzes();
+    })();
+    </script>
+</body>
+</html>

@@ -345,6 +345,41 @@ app.get('/api/users/:displayName', async (req, res) => {
 });
 
 // ============================================================
+// EXPLORE FEED API
+// ============================================================
+
+// Get public quizzes for Explore feed
+app.get('/api/explore', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT q.id, q.slug, q.topic, q.created_at,
+              u.display_name as creator_name,
+              COUNT(DISTINCT qa.id) as play_count
+       FROM quizzes q
+       LEFT JOIN users u ON u.id = q.created_by_user_id
+       LEFT JOIN quiz_attempts qa ON qa.quiz_id = q.id
+       GROUP BY q.id, q.slug, q.topic, q.created_at, u.display_name
+       ORDER BY q.created_at DESC
+       LIMIT 100`
+    );
+
+    res.json({
+      quizzes: result.rows.map(row => ({
+        slug: row.slug,
+        topic: row.topic,
+        creatorName: row.creator_name || 'Anonymous',
+        playCount: parseInt(row.play_count),
+        createdAt: row.created_at,
+        url: `/quiz/${row.slug}`
+      }))
+    });
+  } catch (err) {
+    console.error('Explore feed error:', err);
+    res.status(500).json({ error: 'Failed to load explore feed' });
+  }
+});
+
+// ============================================================
 // DASHBOARD API
 // ============================================================
 
@@ -921,6 +956,11 @@ app.get('/dashboard', (req, res) => {
 // Pricing page
 app.get('/pricing', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pricing.html'));
+});
+
+// Explore page
+app.get('/explore', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'explore.html'));
 });
 
 // ============================================================

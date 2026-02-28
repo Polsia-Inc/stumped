@@ -1,0 +1,27 @@
+[
+  {
+    "content": "Create Explore feed API endpoint",
+    "status": "completed",
+    "activeForm": "Creating Explore feed API endpoint"
+  },
+  {
+    "content": "Create Explore feed HTML page",
+    "status": "completed",
+    "activeForm": "Creating Explore feed HTML page"
+  },
+  {
+    "content": "Create Stumped system account",
+    "status": "completed",
+    "activeForm": "Creating Stumped system account"
+  },
+  {
+    "content": "Generate 30-40 seed quizzes",
+    "status": "in_progress",
+    "activeForm": "Generating 30-40 seed quizzes"
+  },
+  {
+    "content": "Deploy to production",
+    "status": "pending",
+    "activeForm": "Deploying to production"
+  }
+]
