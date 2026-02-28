@@ -28,6 +28,9 @@ const openai = new OpenAI({
   baseURL: process.env.OPENAI_BASE_URL
 });
 
+// Trust proxy for Render deployment (enables secure cookies behind proxy)
+app.set('trust proxy', 1);
+
 // Session middleware
 app.use(session({
   store: new pgSession({
