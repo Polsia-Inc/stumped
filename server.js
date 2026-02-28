@@ -63,6 +63,17 @@ function generateSlug() {
   return crypto.randomBytes(4).toString('hex'); // 8 char hex slug
 }
 
+// Check if user has active Pro subscription
+function isProActive(user) {
+  if (!user.pro) return false;
+  if (!user.pro_expires) return true; // Lifetime pro
+  return new Date(user.pro_expires) > new Date();
+}
+
+// Pro subscription constants
+const PRO_PAYMENT_LINK = 'https://buy.stripe.com/aFafZh3rE35SdAAb5gdk01W';
+const PRO_MONTHLY_PRICE = 4;
+
 // ============================================================
 // AUTH API
 // ============================================================
@@ -207,7 +218,7 @@ app.get('/api/auth/me', async (req, res) => {
     }
 
     const result = await pool.query(
-      'SELECT id, email, display_name, avatar_url FROM users WHERE id = $1',
+      'SELECT id, email, display_name, avatar_url, pro, pro_since, pro_expires, bio FROM users WHERE id = $1',
       [req.session.userId]
     );
 
@@ -217,13 +228,18 @@ app.get('/api/auth/me', async (req, res) => {
     }
 
     const user = result.rows[0];
+    const proActive = isProActive(user);
 
     res.json({
       user: {
         id: user.id,
         email: user.email,
         displayName: user.display_name,
-        avatarUrl: user.avatar_url
+        avatarUrl: user.avatar_url,
+        bio: user.bio,
+        isPro: proActive,
+        proSince: user.pro_since,
+        proExpires: user.pro_expires
       }
     });
   } catch (err) {
@@ -243,7 +259,7 @@ app.get('/api/users/:displayName', async (req, res) => {
 
     // Get user
     const userResult = await pool.query(
-      'SELECT id, display_name, avatar_url, created_at FROM users WHERE LOWER(display_name) = $1',
+      'SELECT id, display_name, avatar_url, created_at, pro, pro_since, pro_expires, bio FROM users WHERE LOWER(display_name) = $1',
       [displayName.toLowerCase()]
     );
 
@@ -252,6 +268,7 @@ app.get('/api/users/:displayName', async (req, res) => {
     }
 
     const user = userResult.rows[0];
+    const proActive = isProActive(user);
 
     // Get created quizzes
     const quizzesResult = await pool.query(
@@ -285,7 +302,9 @@ app.get('/api/users/:displayName', async (req, res) => {
       user: {
         displayName: user.display_name,
         avatarUrl: user.avatar_url,
-        joinedAt: user.created_at
+        joinedAt: user.created_at,
+        isPro: proActive,
+        bio: user.bio
       },
       stats: {
         quizzesCreated: parseInt(stats.quizzes_created),
@@ -349,6 +368,24 @@ app.get('/api/dashboard/quiz-history', async (req, res) => {
   try {
     if (!req.session.userId) {
       return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    // Check Pro status
+    const userResult = await pool.query(
+      'SELECT pro, pro_expires FROM users WHERE id = $1',
+      [req.session.userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user = userResult.rows[0];
+    if (!isProActive(user)) {
+      return res.status(403).json({
+        error: 'Pro subscription required',
+        upgradeUrl: PRO_PAYMENT_LINK
+      });
     }
 
     const result = await pool.query(
@@ -695,6 +732,130 @@ app.get('/api/quizzes/:slug/leaderboard', async (req, res) => {
   } catch (err) {
     console.error('Leaderboard error:', err);
     res.status(500).json({ error: 'Failed to load leaderboard' });
+  }
+});
+
+// ============================================================
+// PRO SUBSCRIPTION API
+// ============================================================
+
+// Get Pro upgrade info
+app.get('/api/pro/info', (req, res) => {
+  res.json({
+    monthlyPrice: PRO_MONTHLY_PRICE,
+    paymentLink: PRO_PAYMENT_LINK,
+    features: [
+      'Full quiz history with scores and dates',
+      'Custom profile with bio and avatar',
+      'Dashboard analytics (play counts, completion rates)',
+      'Priority support'
+    ]
+  });
+});
+
+// Initiate Pro upgrade
+app.post('/api/pro/upgrade', async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const userResult = await pool.query(
+      'SELECT email, display_name FROM users WHERE id = $1',
+      [req.session.userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user = userResult.rows[0];
+
+    // Build Stripe URL with prefill
+    const stripeUrl = new URL(PRO_PAYMENT_LINK);
+    stripeUrl.searchParams.set('prefilled_email', user.email);
+    stripeUrl.searchParams.set('client_reference_id', `user_${req.session.userId}`);
+
+    res.json({
+      paymentUrl: stripeUrl.toString(),
+      monthlyPrice: PRO_MONTHLY_PRICE
+    });
+  } catch (err) {
+    console.error('Upgrade error:', err);
+    res.status(500).json({ error: 'Failed to initiate upgrade' });
+  }
+});
+
+// Verify Pro payment and activate subscription
+app.post('/api/pro/verify', async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    // Customer confirmed payment - activate Pro (trust-based until webhooks)
+    const now = new Date();
+    const expires = new Date(now);
+    expires.setMonth(expires.getMonth() + 1); // 1 month from now
+
+    await pool.query(
+      `UPDATE users
+       SET pro = TRUE,
+           pro_since = COALESCE(pro_since, $1),
+           pro_expires = $2
+       WHERE id = $3`,
+      [now, expires, req.session.userId]
+    );
+
+    res.json({
+      success: true,
+      isPro: true,
+      proExpires: expires
+    });
+  } catch (err) {
+    console.error('Verify Pro error:', err);
+    res.status(500).json({ error: 'Failed to verify payment' });
+  }
+});
+
+// Update profile (Pro only for bio)
+app.post('/api/profile/update', async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const { bio } = req.body;
+
+    if (bio !== undefined) {
+      // Check Pro status for bio updates
+      const userResult = await pool.query(
+        'SELECT pro, pro_expires FROM users WHERE id = $1',
+        [req.session.userId]
+      );
+
+      if (userResult.rows.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const user = userResult.rows[0];
+      if (!isProActive(user)) {
+        return res.status(403).json({
+          error: 'Pro subscription required for custom bio',
+          upgradeUrl: PRO_PAYMENT_LINK
+        });
+      }
+
+      await pool.query(
+        'UPDATE users SET bio = $1 WHERE id = $2',
+        [bio.substring(0, 500), req.session.userId]
+      );
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Update profile error:', err);
+    res.status(500).json({ error: 'Failed to update profile' });
   }
 });
 

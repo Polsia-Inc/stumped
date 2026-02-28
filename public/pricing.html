@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing | Stumped</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-2: #1a1a1a;
+      --border: #222;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --accent: #c8ff00;
+      --accent-dim: rgba(200, 255, 0, 0.08);
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* NAV */
+    nav { padding: 24px 0; border-bottom: 1px solid var(--border); }
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* PRICING */
+    main { padding: 80px 0; }
+    .pricing-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .pricing-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    .pricing-header p {
+      font-size: 18px;
+      color: var(--text-muted);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      position: relative;
+    }
+
+    .pricing-card.pro {
+      border-color: var(--accent);
+      box-shadow: 0 0 40px rgba(200, 255, 0, 0.15);
+    }
+
+    .pricing-card.pro::before {
+      content: 'RECOMMENDED';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .plan-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .plan-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .plan-price span { font-size: 18px; font-weight: 400; color: var(--text-muted); }
+
+    .plan-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .features {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+    .features li {
+      padding: 10px 0;
+      padding-left: 24px;
+      position: relative;
+      font-size: 14px;
+    }
+    .features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .cta-button {
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .cta-button.primary {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .cta-button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(200, 255, 0, 0.3);
+    }
+
+    .cta-button.secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .cta-button.secondary:hover {
+      background: var(--surface);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+      margin-top: 80px;
+    }
+
+    @media (max-width: 768px) {
+      .pricing-header h1 { font-size: 36px; }
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/" class="logo">Stumped</a>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/pricing">Pricing</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="pricing-header">
+        <h1>Simple, transparent pricing</h1>
+        <p>Upgrade to Pro for advanced features. Cancel anytime.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Free Tier -->
+        <div class="pricing-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price">$0</div>
+          <div class="plan-desc">Perfect for casual quiz creators</div>
+          <ul class="features">
+            <li>Create unlimited quizzes</li>
+            <li>Play unlimited quizzes</li>
+            <li>Basic profile with display name</li>
+            <li>Public leaderboards</li>
+            <li>Quiz sharing</li>
+          </ul>
+          <button class="cta-button secondary" onclick="window.location.href='/'">
+            Get Started Free
+          </button>
+        </div>
+
+        <!-- Pro Tier -->
+        <div class="pricing-card pro">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$4<span>/month</span></div>
+          <div class="plan-desc">For power users who want more</div>
+          <ul class="features">
+            <li><strong>Everything in Free, plus:</strong></li>
+            <li>Full quiz history with scores & dates</li>
+            <li>Custom bio on profile</li>
+            <li>Dashboard analytics</li>
+            <li>Play count tracking</li>
+            <li>Completion rate stats</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="cta-button primary" onclick="upgradeToPro()">
+            Upgrade to Pro
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Stumped. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    async function upgradeToPro() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) {
+          // Not logged in - redirect to signup
+          window.location.href = '/signup.html?redirect=/pricing';
+          return;
+        }
+
+        // Get payment link
+        const upgradeRes = await fetch('/api/pro/upgrade', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!upgradeRes.ok) {
+          alert('Failed to start upgrade process');
+          return;
+        }
+
+        const data = await upgradeRes.json();
+
+        // Open payment in new tab
+        const stripeWindow = window.open(data.paymentUrl, '_blank');
+
+        if (stripeWindow) {
+          // Store pending upgrade
+          localStorage.setItem('pending_pro_upgrade', JSON.stringify({
+            timestamp: Date.now()
+          }));
+
+          // Show completion prompt
+          if (confirm('Complete your payment in the new tab. Click OK when finished to activate your Pro subscription.')) {
+            // Verify payment
+            const verifyRes = await fetch('/api/pro/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (verifyRes.ok) {
+              localStorage.removeItem('pending_pro_upgrade');
+              alert('Pro subscription activated! 🎉');
+              window.location.href = '/dashboard';
+            } else {
+              alert('Could not verify payment. Please contact support if you completed payment.');
+            }
+          }
+        } else {
+          // Popup blocked - redirect directly
+          localStorage.setItem('pending_pro_upgrade', JSON.stringify({
+            timestamp: Date.now()
+          }));
+          window.location.href = data.paymentUrl;
+        }
+      } catch (err) {
+        console.error('Upgrade error:', err);
+        alert('An error occurred. Please try again.');
+      }
+    }
+
+    // Check for pending upgrade on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const pending = localStorage.getItem('pending_pro_upgrade');
+      if (pending) {
+        const data = JSON.parse(pending);
+        // Only show if within last 24 hours
+        if (Date.now() - data.timestamp < 86400000) {
+          if (confirm('Did you complete your Pro upgrade payment?')) {
+            fetch('/api/pro/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            }).then(res => {
+              if (res.ok) {
+                localStorage.removeItem('pending_pro_upgrade');
+                alert('Pro subscription activated! 🎉');
+                window.location.href = '/dashboard';
+              } else {
+                alert('Could not verify payment. Please contact support if you completed payment.');
+              }
+            });
+          } else {
+            localStorage.removeItem('pending_pro_upgrade');
+          }
+        } else {
+          localStorage.removeItem('pending_pro_upgrade');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

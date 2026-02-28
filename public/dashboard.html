@@ -209,6 +209,105 @@
       color: var(--text-muted);
     }
 
+    /* Pro Badge */
+    .pro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      margin-left: 12px;
+    }
+
+    /* Upgrade CTA */
+    .upgrade-card {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+    .upgrade-content h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .upgrade-content p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .btn-upgrade {
+      background: var(--accent);
+      color: var(--bg);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .btn-upgrade:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(200, 255, 0, 0.3);
+    }
+
+    /* Quiz History */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .section-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .history-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .history-info {
+      flex: 1;
+    }
+    .history-topic {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .history-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .history-score {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--accent);
+    }
+
     /* Mobile */
     @media (max-width: 768px) {
       .container { padding: 0 20px; }
@@ -250,13 +349,34 @@
 
   <div class="dashboard-header">
     <div class="container">
-      <h1>My Quizzes</h1>
+      <h1 id="dashboard-title">My Quizzes</h1>
       <p>All the quizzes you've created</p>
     </div>
   </div>
 
   <div class="dashboard-content">
     <div class="container">
+      <!-- Upgrade CTA (Free users only) -->
+      <div id="upgrade-cta" class="upgrade-card" style="display:none;">
+        <div class="upgrade-content">
+          <h3>Upgrade to Pro</h3>
+          <p>Get full quiz history, custom profile, and dashboard analytics for just $4/month</p>
+        </div>
+        <button class="btn-upgrade" onclick="window.location.href='/pricing'">Upgrade Now</button>
+      </div>
+
+      <!-- Quiz History (Pro only) -->
+      <div id="history-section" style="display:none; margin-bottom: 48px;">
+        <div class="section-header">
+          <h2>Quiz History</h2>
+        </div>
+        <div id="history-content"></div>
+      </div>
+
+      <!-- My Quizzes Section -->
+      <div class="section-header" style="margin-bottom: 24px;">
+        <h2>My Quizzes</h2>
+      </div>
       <div id="loading" class="loading">Loading your quizzes...</div>
       <div id="empty-state" class="empty-state" style="display:none;">
         <h2>No quizzes yet</h2>
@@ -289,8 +409,56 @@
           <button class="btn-logout" id="logout-btn">Logout</button>
         `;
         document.getElementById('logout-btn').addEventListener('click', logout);
+
+        // Show Pro badge if user is Pro
+        if (currentUser.isPro) {
+          const title = document.getElementById('dashboard-title');
+          title.innerHTML = `My Quizzes<span class="pro-badge">PRO</span>`;
+        }
+
+        // Show upgrade CTA if not Pro
+        if (!currentUser.isPro) {
+          document.getElementById('upgrade-cta').style.display = 'flex';
+        }
+
+        // Load quiz history for Pro users
+        if (currentUser.isPro) {
+          loadQuizHistory();
+        }
       } catch (err) {
         window.location.href = '/login.html';
+      }
+    }
+
+    async function loadQuizHistory() {
+      try {
+        const res = await fetch('/api/dashboard/quiz-history');
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const historySection = document.getElementById('history-section');
+        const historyContent = document.getElementById('history-content');
+
+        if (data.history.length === 0) {
+          historyContent.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">No quiz history yet. Take some quizzes!</p>';
+        } else {
+          historyContent.innerHTML = data.history.slice(0, 10).map(h => `
+            <div class="history-card">
+              <div class="history-info">
+                <div class="history-topic">${escHtml(h.topic)}</div>
+                <div class="history-stats">
+                  <span>⏱️ ${h.timeTaken}s</span>
+                  <span>📅 ${formatDate(h.completedAt)}</span>
+                </div>
+              </div>
+              <div class="history-score">${h.percentage}%</div>
+            </div>
+          `).join('');
+        }
+
+        historySection.style.display = 'block';
+      } catch (err) {
+        console.error('Failed to load quiz history:', err);
       }
     }
 

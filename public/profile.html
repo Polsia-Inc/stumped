@@ -87,6 +87,19 @@
       font-size: 14px;
       color: var(--text-muted);
     }
+    .pro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      margin-left: 12px;
+    }
 
     .profile-stats {
       display: grid;
@@ -250,6 +263,7 @@
           <div class="profile-info">
             <h1 class="profile-name" id="profile-name"></h1>
             <p class="profile-joined" id="profile-joined"></p>
+            <p class="profile-bio" id="profile-bio" style="margin-top:12px;color:var(--text-muted);font-size:14px;line-height:1.5;display:none;"></p>
           </div>
         </div>
         <div class="profile-stats">
@@ -321,9 +335,24 @@
         const data = await res.json();
 
         document.getElementById('page-title').textContent = data.user.displayName + ' | Stumped';
-        document.getElementById('profile-name').textContent = data.user.displayName;
+
+        // Show Pro badge if user is Pro
+        const profileName = document.getElementById('profile-name');
+        if (data.user.isPro) {
+          profileName.innerHTML = escHtml(data.user.displayName) + '<span class="pro-badge">PRO</span>';
+        } else {
+          profileName.textContent = data.user.displayName;
+        }
+
         document.getElementById('profile-joined').textContent = 'Joined ' + formatDate(data.user.joinedAt);
         document.getElementById('profile-avatar').textContent = data.user.displayName.charAt(0).toUpperCase();
+
+        // Show bio if available
+        if (data.user.bio) {
+          const bioEl = document.getElementById('profile-bio');
+          bioEl.textContent = data.user.bio;
+          bioEl.style.display = 'block';
+        }
 
         document.getElementById('stat-created').textContent = data.stats.quizzesCreated;
         document.getElementById('stat-taken').textContent = data.stats.quizzesTaken;
