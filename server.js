@@ -894,6 +894,11 @@ app.get('/u/:displayName', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'profile.html'));
 });
 
+// Pricing page
+app.get('/pricing', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pricing.html'));
+});
+
 // ============================================================
 // Landing page with analytics beacon
 // ============================================================
