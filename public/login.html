@@ -211,8 +211,8 @@
           return;
         }
 
-        // Success - redirect to home or dashboard
-        window.location.href = '/';
+        // Success - redirect to dashboard
+        window.location.href = '/dashboard';
       } catch (err) {
         errorMsg.textContent = 'Network error. Please try again.';
         errorMsg.classList.add('show');
