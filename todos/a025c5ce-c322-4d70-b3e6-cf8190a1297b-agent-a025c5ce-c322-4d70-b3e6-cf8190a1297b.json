@@ -1,0 +1,37 @@
+[
+  {
+    "content": "Create dynamic OG image generation endpoint for quiz cards",
+    "status": "completed",
+    "activeForm": "Creating dynamic OG image generation endpoint"
+  },
+  {
+    "content": "Update quiz page OG tags with better copy and images",
+    "status": "completed",
+    "activeForm": "Updating quiz page OG tags"
+  },
+  {
+    "content": "Add OG tags to homepage (index.html)",
+    "status": "completed",
+    "activeForm": "Adding OG tags to homepage"
+  },
+  {
+    "content": "Add OG tags to explore page",
+    "status": "completed",
+    "activeForm": "Adding OG tags to explore page"
+  },
+  {
+    "content": "Convert profile page to server-side rendering with dynamic OG tags",
+    "status": "completed",
+    "activeForm": "Converting profile page to SSR"
+  },
+  {
+    "content": "Test OG tags with Twitter and Facebook validators",
+    "status": "pending",
+    "activeForm": "Testing with OG validators"
+  },
+  {
+    "content": "Deploy and verify",
+    "status": "in_progress",
+    "activeForm": "Deploying and verifying"
+  }
+]

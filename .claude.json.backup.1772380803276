@@ -7,7 +7,7 @@
   "userID": "b2dba6de36247cf9943fd0c6ec0305221b1e147622ba53adcb5db4eecc2957ff",
   "clientDataCache": {
     "data": null,
-    "timestamp": 1772242614109
+    "timestamp": 1772301708561
   },
   "projects": {
     "/tmp/polsia-workspaces/company-7967/agent-30/exec-126310/stumped": {
@@ -47,6 +47,44 @@
         "dashboard.html"
       ],
       "exampleFilesGeneratedAt": 1772243250548
+    },
+    "/tmp/polsia-workspaces/company-7967/agent-30/exec-131551/stumped": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "server.js",
+        "index.html",
+        "signup.html",
+        "dashboard.html",
+        "profile.html"
+      ],
+      "exampleFilesGeneratedAt": 1772288703023
+    },
+    "/tmp/polsia-workspaces/company-7967/agent-30/exec-133205/stumped": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "server.js",
+        "index.html",
+        "package.json",
+        ".claude.json",
+        "dashboard.html"
+      ],
+      "exampleFilesGeneratedAt": 1772301703869
     }
   }
 }

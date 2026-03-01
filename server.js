@@ -1080,6 +1080,111 @@ app.get('/api/admin/dashboard', requireAdmin, async (req, res) => {
 });
 
 // ============================================================
+// OG IMAGE GENERATION
+// ============================================================
+app.get('/og/quiz/:slug.png', async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    // Fetch quiz info
+    const quizResult = await pool.query(
+      'SELECT topic FROM quizzes WHERE slug = $1',
+      [slug]
+    );
+
+    if (quizResult.rows.length === 0) {
+      return res.status(404).send('Quiz not found');
+    }
+
+    const topic = quizResult.rows[0].topic;
+
+    // Get play count
+    const countResult = await pool.query(
+      'SELECT COUNT(*) as c FROM quiz_attempts WHERE quiz_id = (SELECT id FROM quizzes WHERE slug = $1)',
+      [slug]
+    );
+    const playCount = parseInt(countResult.rows[0].c);
+
+    // Get top score
+    const topScoreResult = await pool.query(
+      `SELECT score, total_questions, player_name
+       FROM quiz_attempts
+       WHERE quiz_id = (SELECT id FROM quizzes WHERE slug = $1)
+       ORDER BY score DESC, time_taken_seconds ASC NULLS LAST
+       LIMIT 1`,
+      [slug]
+    );
+
+    let topScoreText = '';
+    if (topScoreResult.rows.length > 0) {
+      const top = topScoreResult.rows[0];
+      const percentage = Math.round((top.score / top.total_questions) * 100);
+      topScoreText = `Top Score: ${percentage}%`;
+    }
+
+    // Generate SVG
+    const svg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+
+  <!-- Accent gradient -->
+  <defs>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c8ff00;stop-opacity:0.15" />
+      <stop offset="100%" style="stop-color:#c8ff00;stop-opacity:0.03" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#accentGrad)"/>
+
+  <!-- Border -->
+  <rect x="60" y="60" width="1080" height="510" fill="none" stroke="#222" stroke-width="2" rx="20"/>
+
+  <!-- Brand -->
+  <text x="100" y="130" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#f0f0f0">
+    stumped<tspan fill="#c8ff00">.</tspan>
+  </text>
+
+  <!-- Topic -->
+  <text x="100" y="220" font-family="Arial, sans-serif" font-size="20" font-weight="500" fill="#c8ff00" text-transform="uppercase" letter-spacing="2">
+    TRIVIA QUIZ
+  </text>
+  <text x="100" y="300" font-family="Arial, sans-serif" font-size="56" font-weight="bold" fill="#f0f0f0" text-anchor="start">
+    ${escapeXml(topic.length > 35 ? topic.substring(0, 35) + '...' : topic)}
+  </text>
+
+  <!-- Stats -->
+  <text x="100" y="400" font-family="Arial, sans-serif" font-size="24" fill="#888">
+    ${playCount > 0 ? `${playCount} ${playCount === 1 ? 'player' : 'players'} • ` : ''}10 questions • 30s each
+  </text>
+  ${topScoreText ? `<text x="100" y="450" font-family="Arial, sans-serif" font-size="22" fill="#c8ff00">${escapeXml(topScoreText)}</text>` : ''}
+
+  <!-- CTA -->
+  <rect x="100" y="480" width="200" height="50" fill="#c8ff00" rx="8"/>
+  <text x="200" y="512" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#0a0a0a" text-anchor="middle">
+    Play Now
+  </text>
+</svg>`;
+
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+    res.send(svg);
+  } catch (err) {
+    console.error('OG image generation error:', err);
+    res.status(500).send('Failed to generate image');
+  }
+});
+
+// Helper to escape XML special characters
+function escapeXml(unsafe) {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+// ============================================================
 // PAGES: Quiz page with OG meta tags
 // ============================================================
 app.get('/quiz/:slug', async (req, res) => {
@@ -1108,10 +1213,80 @@ app.get('/quiz/:slug', async (req, res) => {
 });
 
 // ============================================================
-// User profile page
+// User profile page (with dynamic OG tags)
 // ============================================================
-app.get('/u/:displayName', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+app.get('/u/:displayName', async (req, res) => {
+  try {
+    const { displayName } = req.params;
+
+    // Fetch user data for OG tags
+    const userResult = await pool.query(
+      `SELECT id, display_name, created_at, pro, pro_since, pro_expires
+       FROM users WHERE LOWER(display_name) = $1`,
+      [displayName.toLowerCase()]
+    );
+
+    let ogTitle = 'Profile | Stumped';
+    let ogDesc = 'View trivia quiz profile on Stumped.';
+
+    if (userResult.rows.length > 0) {
+      const user = userResult.rows[0];
+
+      // Get stats
+      const statsResult = await pool.query(
+        `SELECT
+          COUNT(DISTINCT q.id) as quizzes_created,
+          COUNT(DISTINCT qa.id) as quizzes_taken
+         FROM users u
+         LEFT JOIN quizzes q ON q.created_by_user_id = u.id
+         LEFT JOIN quiz_attempts qa ON qa.user_id = u.id
+         WHERE u.id = $1`,
+        [user.id]
+      );
+
+      const stats = statsResult.rows[0];
+      const quizzesCreated = parseInt(stats.quizzes_created);
+      const quizzesTaken = parseInt(stats.quizzes_taken);
+
+      ogTitle = `${user.display_name} on Stumped`;
+      ogDesc = `${quizzesCreated} ${quizzesCreated === 1 ? 'quiz' : 'quizzes'} created · ${quizzesTaken} ${quizzesTaken === 1 ? 'quiz' : 'quizzes'} played`;
+    }
+
+    const appUrl = process.env.APP_URL || 'https://stumped.polsia.app';
+
+    // Read profile.html and inject OG tags
+    const htmlPath = path.join(__dirname, 'public', 'profile.html');
+    let html = fs.readFileSync(htmlPath, 'utf8');
+
+    // Inject OG tags after the title tag
+    const ogTags = `
+  <meta name="description" content="${ogDesc}">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="profile">
+  <meta property="og:title" content="${ogTitle}">
+  <meta property="og:description" content="${ogDesc}">
+  <meta property="og:url" content="${appUrl}/u/${encodeURIComponent(displayName)}">
+  <meta property="og:site_name" content="Stumped">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="${ogTitle}">
+  <meta name="twitter:description" content="${ogDesc}">
+`;
+
+    // Replace the title tag with title + OG tags
+    html = html.replace(
+      /<title id="page-title">Profile \| Stumped<\/title>/,
+      `<title id="page-title">${ogTitle}</title>${ogTags}`
+    );
+
+    res.type('html').send(html);
+  } catch (err) {
+    console.error('Profile page error:', err);
+    // Fallback to static file
+    res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+  }
 });
 
 // Dashboard page
@@ -1158,8 +1333,11 @@ app.get('/', (req, res) => {
 // HTML Templates
 // ============================================================
 function getQuizPageHTML(slug, topic, playerCount, appUrl) {
-  const ogTitle = `${topic} - Think you know your stuff?`;
-  const ogDesc = `${playerCount > 0 ? playerCount + ' people have tried this quiz. ' : ''}10 questions. 30 seconds each. Can you get them all right?`;
+  const ogTitle = playerCount > 0
+    ? `Can you beat ${playerCount} ${playerCount === 1 ? 'player' : 'players'}? ${topic} Trivia`
+    : `${topic} Trivia - Can You Get Them All Right?`;
+  const ogDesc = `10 questions. 30 seconds each. ${playerCount > 0 ? playerCount + ' people have tried. ' : ''}Think you know your stuff?`;
+  const ogImage = `${appUrl}/og/quiz/${slug}.png`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -1175,11 +1353,16 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
   <meta property="og:description" content="${ogDesc}">
   <meta property="og:url" content="${appUrl}/quiz/${slug}">
   <meta property="og:site_name" content="Stumped">
+  <meta property="og:image" content="${ogImage}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/svg+xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${ogTitle}">
   <meta name="twitter:description" content="${ogDesc}">
+  <meta name="twitter:image" content="${ogImage}">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
