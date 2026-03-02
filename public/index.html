@@ -354,6 +354,16 @@
             align-items: center;
             gap: 4px;
         }
+        .see-all-link {
+            font-size: 14px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        .see-all-link:hover {
+            opacity: 0.8;
+        }
 
         .preview-card {
             background: var(--surface);
@@ -712,6 +722,16 @@
         </div>
     </section>
 
+    <section class="explore-section" id="explore-section" style="display:none;">
+        <div class="container">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;">
+                <h2 class="section-header" style="margin:0;">Explore Quizzes</h2>
+                <a href="/explore" class="see-all-link">See All →</a>
+            </div>
+            <div class="quiz-grid" id="explore-grid"></div>
+        </div>
+    </section>
+
     <section class="demo-strip">
         <div class="container">
             <div class="demo-flow">
@@ -991,6 +1011,47 @@
             }
         } catch (err) {
             console.error('Failed to load trending quizzes:', err);
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    })();
+    </script>
+
+    <!-- Load Explore Preview -->
+    <script>
+    (async function() {
+        try {
+            const res = await fetch('/api/explore');
+            const data = await res.json();
+
+            if (data.quizzes && data.quizzes.length > 0) {
+                const section = document.getElementById('explore-section');
+                const grid = document.getElementById('explore-grid');
+
+                // Show first 12 quizzes
+                const previewQuizzes = data.quizzes.slice(0, 12);
+
+                previewQuizzes.forEach(quiz => {
+                    const card = document.createElement('a');
+                    card.className = 'quiz-card';
+                    card.href = quiz.url;
+                    card.innerHTML = `
+                        <div class="quiz-card-topic">${escapeHtml(quiz.topic)}</div>
+                        <div class="quiz-card-meta">
+                            ${quiz.playCount > 0 ? `<span class="quiz-card-plays">▶ ${quiz.playCount} ${quiz.playCount === 1 ? 'play' : 'plays'}</span>` : '<span style="opacity:0.6;">No plays yet</span>'}
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                section.style.display = 'block';
+            }
+        } catch (err) {
+            console.error('Failed to load explore quizzes:', err);
         }
 
         function escapeHtml(str) {
