@@ -303,6 +303,58 @@
             color: var(--accent);
         }
 
+        /* TRENDING/EXPLORE SECTIONS */
+        .trending-section, .explore-section {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+        .section-header {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+            margin-bottom: 28px;
+        }
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .quiz-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        .quiz-card:hover {
+            border-color: var(--accent);
+            background: var(--surface-2);
+        }
+        .quiz-card-topic {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .quiz-card-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-card-plays {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .preview-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -472,6 +524,9 @@
         /* MOBILE — Tablet */
         @media (max-width: 768px) {
             .container { padding: 0 20px; }
+            .trending-section, .explore-section { padding: 48px 0; }
+            .section-header { font-size: 24px; margin-bottom: 20px; }
+            .quiz-grid { grid-template-columns: 1fr; }
             .hero {
                 padding: 60px 0 48px;
             }
@@ -647,6 +702,13 @@
                     <span class="quick-pill" data-topic="Greek Mythology">Greek Mythology</span>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section class="trending-section" id="trending-section" style="display:none;">
+        <div class="container">
+            <h2 class="section-header">Trending Quizzes</h2>
+            <div class="quiz-grid" id="trending-grid"></div>
         </div>
     </section>
 
@@ -898,6 +960,44 @@
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') generateQuiz();
         });
+    })();
+    </script>
+
+    <!-- Load Trending Quizzes -->
+    <script>
+    (async function() {
+        try {
+            const res = await fetch('/api/trending');
+            const data = await res.json();
+
+            if (data.quizzes && data.quizzes.length > 0) {
+                const section = document.getElementById('trending-section');
+                const grid = document.getElementById('trending-grid');
+
+                data.quizzes.forEach(quiz => {
+                    const card = document.createElement('a');
+                    card.className = 'quiz-card';
+                    card.href = quiz.url;
+                    card.innerHTML = `
+                        <div class="quiz-card-topic">${escapeHtml(quiz.topic)}</div>
+                        <div class="quiz-card-meta">
+                            <span class="quiz-card-plays">🔥 ${quiz.playCount} ${quiz.playCount === 1 ? 'play' : 'plays'}</span>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                section.style.display = 'block';
+            }
+        } catch (err) {
+            console.error('Failed to load trending quizzes:', err);
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
     })();
     </script>
 </body>

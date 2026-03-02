@@ -387,6 +387,38 @@ app.get('/api/explore', async (req, res) => {
   }
 });
 
+// Get trending quizzes (most played)
+app.get('/api/trending', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT q.id, q.slug, q.topic, q.created_at,
+              u.display_name as creator_name,
+              COUNT(DISTINCT qa.id) as play_count
+       FROM quizzes q
+       LEFT JOIN users u ON u.id = q.created_by_user_id
+       LEFT JOIN quiz_attempts qa ON qa.quiz_id = q.id
+       GROUP BY q.id, q.slug, q.topic, q.created_at, u.display_name
+       HAVING COUNT(DISTINCT qa.id) > 0
+       ORDER BY play_count DESC, q.created_at DESC
+       LIMIT 8`
+    );
+
+    res.json({
+      quizzes: result.rows.map(row => ({
+        slug: row.slug,
+        topic: row.topic,
+        creatorName: row.creator_name || 'Anonymous',
+        playCount: parseInt(row.play_count),
+        createdAt: row.created_at,
+        url: `/quiz/${row.slug}`
+      }))
+    });
+  } catch (err) {
+    console.error('Trending quizzes error:', err);
+    res.status(500).json({ error: 'Failed to load trending quizzes' });
+  }
+});
+
 // ============================================================
 // DASHBOARD API
 // ============================================================
