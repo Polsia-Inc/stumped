@@ -23,7 +23,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
+        html { scroll-behavior: smooth; }
+
         :root {
             --bg: #0a0a0a;
             --surface: #141414;
@@ -65,8 +67,29 @@
             font-size: 22px;
             letter-spacing: -0.5px;
             color: var(--text);
+            text-decoration: none;
         }
         .logo span {
+            color: var(--accent);
+        }
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .nav-link {
+            font-size: 14px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
             color: var(--accent);
         }
         .nav-tag {
@@ -616,6 +639,9 @@
             .container { padding: 0 16px; }
             nav { padding: 16px 0; }
             .logo { font-size: 20px; }
+            .nav-content { gap: 16px; }
+            .nav-links { gap: 16px; }
+            .nav-link { font-size: 13px; }
             .nav-tag { font-size: 12px; padding: 5px 12px; }
             .hero {
                 padding: 40px 0 36px;
@@ -700,6 +726,10 @@
         /* Extra small phones (375px — iPhone SE) */
         @media (max-width: 375px) {
             .container { padding: 0 12px; }
+            nav .container { flex-wrap: wrap; gap: 12px; }
+            .nav-content { width: 100%; justify-content: space-between; }
+            .nav-links { gap: 12px; }
+            .nav-link { font-size: 12px; }
             .hero h1 { font-size: 28px; }
             .hero p { font-size: 15px; }
             .generate-input { padding: 14px 16px; }
@@ -715,9 +745,16 @@
 
     <nav>
         <div class="container">
-            <div class="logo">stumped<span>.</span></div>
-            <div id="nav-auth">
-                <div class="nav-tag">Loading...</div>
+            <a href="/" class="logo">stumped<span>.</span></a>
+            <div class="nav-content">
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/explore" class="nav-link">Explore</a>
+                    <a href="/#generate" class="nav-link">Create Quiz</a>
+                </div>
+                <div id="nav-auth">
+                    <div class="nav-tag">Loading...</div>
+                </div>
             </div>
         </div>
     </nav>
@@ -727,7 +764,7 @@
             <div class="hero-label">AI-powered trivia</div>
             <h1>Any topic.<br>Ten questions.<br><em>One link.</em></h1>
             <p>Generate a trivia quiz on literally anything, share the link, and watch your friends try to beat each other on the leaderboard. No app. No account. Just bragging rights.</p>
-            <div class="generate-form">
+            <div class="generate-form" id="generate">
                 <div class="generate-row">
                     <input type="text" class="generate-input" id="topic-input" placeholder="Enter a topic... e.g. 90s Hip Hop" maxlength="200" autocomplete="off">
                     <button class="generate-btn" id="generate-btn">Generate</button>
