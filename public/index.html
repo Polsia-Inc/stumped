@@ -303,6 +303,44 @@
             color: var(--accent);
         }
 
+        /* SEARCH BAR */
+        .search-section {
+            padding: 48px 0 24px;
+            border-top: 1px solid var(--border);
+        }
+        .search-bar {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .search-input {
+            width: 100%;
+            padding: 16px 48px 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
         /* TRENDING/EXPLORE SECTIONS */
         .trending-section, .explore-section {
             padding: 60px 0;
@@ -534,6 +572,7 @@
         /* MOBILE — Tablet */
         @media (max-width: 768px) {
             .container { padding: 0 20px; }
+            .search-section { padding: 36px 0 20px; }
             .trending-section, .explore-section { padding: 48px 0; }
             .section-header { font-size: 24px; margin-bottom: 20px; }
             .quiz-grid { grid-template-columns: 1fr; }
@@ -711,6 +750,15 @@
                     <span class="quick-pill" data-topic="Taylor Swift">Taylor Swift</span>
                     <span class="quick-pill" data-topic="Greek Mythology">Greek Mythology</span>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="search-section" id="search-section" style="display:none;">
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" class="search-input" id="search-input" placeholder="Search quizzes..." autocomplete="off">
+                <span class="search-icon">🔍</span>
             </div>
         </div>
     </section>
@@ -983,18 +1031,66 @@
     })();
     </script>
 
-    <!-- Load Trending Quizzes -->
+    <!-- Load Quizzes & Search -->
     <script>
     (async function() {
+        let trendingQuizzes = [];
+        let exploreQuizzes = [];
+
+        // Load trending quizzes
         try {
             const res = await fetch('/api/trending');
             const data = await res.json();
-
             if (data.quizzes && data.quizzes.length > 0) {
-                const section = document.getElementById('trending-section');
-                const grid = document.getElementById('trending-grid');
+                trendingQuizzes = data.quizzes;
+                renderTrendingQuizzes(trendingQuizzes);
+            }
+        } catch (err) {
+            console.error('Failed to load trending quizzes:', err);
+        }
 
-                data.quizzes.forEach(quiz => {
+        // Load explore quizzes
+        try {
+            const res = await fetch('/api/explore');
+            const data = await res.json();
+            if (data.quizzes && data.quizzes.length > 0) {
+                exploreQuizzes = data.quizzes.slice(0, 12);
+                renderExploreQuizzes(exploreQuizzes);
+            }
+        } catch (err) {
+            console.error('Failed to load explore quizzes:', err);
+        }
+
+        // Show search bar if any quizzes loaded
+        if (trendingQuizzes.length > 0 || exploreQuizzes.length > 0) {
+            document.getElementById('search-section').style.display = 'block';
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('search-input');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            // Filter trending
+            const filteredTrending = query
+                ? trendingQuizzes.filter(q => q.topic.toLowerCase().includes(query))
+                : trendingQuizzes;
+            renderTrendingQuizzes(filteredTrending);
+
+            // Filter explore
+            const filteredExplore = query
+                ? exploreQuizzes.filter(q => q.topic.toLowerCase().includes(query))
+                : exploreQuizzes;
+            renderExploreQuizzes(filteredExplore);
+        });
+
+        function renderTrendingQuizzes(quizzes) {
+            const section = document.getElementById('trending-section');
+            const grid = document.getElementById('trending-grid');
+            grid.innerHTML = '';
+
+            if (quizzes.length > 0) {
+                quizzes.forEach(quiz => {
                     const card = document.createElement('a');
                     card.className = 'quiz-card';
                     card.href = quiz.url;
@@ -1006,36 +1102,19 @@
                     `;
                     grid.appendChild(card);
                 });
-
                 section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
             }
-        } catch (err) {
-            console.error('Failed to load trending quizzes:', err);
         }
 
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-    })();
-    </script>
+        function renderExploreQuizzes(quizzes) {
+            const section = document.getElementById('explore-section');
+            const grid = document.getElementById('explore-grid');
+            grid.innerHTML = '';
 
-    <!-- Load Explore Preview -->
-    <script>
-    (async function() {
-        try {
-            const res = await fetch('/api/explore');
-            const data = await res.json();
-
-            if (data.quizzes && data.quizzes.length > 0) {
-                const section = document.getElementById('explore-section');
-                const grid = document.getElementById('explore-grid');
-
-                // Show first 12 quizzes
-                const previewQuizzes = data.quizzes.slice(0, 12);
-
-                previewQuizzes.forEach(quiz => {
+            if (quizzes.length > 0) {
+                quizzes.forEach(quiz => {
                     const card = document.createElement('a');
                     card.className = 'quiz-card';
                     card.href = quiz.url;
@@ -1047,11 +1126,10 @@
                     `;
                     grid.appendChild(card);
                 });
-
                 section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
             }
-        } catch (err) {
-            console.error('Failed to load explore quizzes:', err);
         }
 
         function escapeHtml(str) {
