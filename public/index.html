@@ -270,6 +270,39 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* QUICK TOPICS */
+        .quick-topics {
+            margin-top: 24px;
+            max-width: 520px;
+        }
+        .quick-topics-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .quick-topics-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .quick-pill {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--text);
+            transition: all 0.2s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .quick-pill:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
         .preview-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -514,6 +547,20 @@
                 font-size: 16px;
                 border-radius: 12px;
             }
+            .quick-topics {
+                margin-top: 20px;
+                max-width: 100%;
+            }
+            .quick-topics-pills {
+                justify-content: center;
+            }
+            .quick-pill {
+                padding: 10px 16px;
+                font-size: 13px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
             .demo-strip { padding-bottom: 48px; }
             .demo-step { padding: 28px 20px; }
             .demo-step .step-num { font-size: 48px; top: 16px; right: 20px; }
@@ -585,6 +632,19 @@
                 <div class="generate-status" id="generate-status">
                     <div class="mini-spinner"></div>
                     <span>Generating your quiz...</span>
+                </div>
+            </div>
+            <div class="quick-topics">
+                <div class="quick-topics-label">Popular topics:</div>
+                <div class="quick-topics-pills">
+                    <span class="quick-pill" data-topic="90s Hip Hop">90s Hip Hop</span>
+                    <span class="quick-pill" data-topic="Marvel">Marvel</span>
+                    <span class="quick-pill" data-topic="World Capitals">World Capitals</span>
+                    <span class="quick-pill" data-topic="The Office">The Office</span>
+                    <span class="quick-pill" data-topic="Harry Potter">Harry Potter</span>
+                    <span class="quick-pill" data-topic="NBA">NBA</span>
+                    <span class="quick-pill" data-topic="Taylor Swift">Taylor Swift</span>
+                    <span class="quick-pill" data-topic="Greek Mythology">Greek Mythology</span>
                 </div>
             </div>
         </div>
@@ -779,11 +839,20 @@
         const error = document.getElementById('generate-error');
         const status = document.getElementById('generate-status');
 
-        // Make topic pills clickable
+        // Make topic pills clickable (demo section)
         document.querySelectorAll('.topic-pill').forEach(pill => {
             pill.addEventListener('click', () => {
                 input.value = pill.textContent;
                 input.focus();
+            });
+        });
+
+        // Make quick pills clickable (generate quiz directly)
+        document.querySelectorAll('.quick-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                const topic = pill.getAttribute('data-topic');
+                input.value = topic;
+                generateQuiz();
             });
         });
 
