@@ -637,6 +637,8 @@ Rules:
 
       await client.query('COMMIT');
 
+      console.log(`Quiz created successfully: slug=${slug}, topic="${cleanTopic}", questions=${questions.length}`);
+
       res.json({
         slug,
         topic: cleanTopic,
@@ -668,6 +670,7 @@ app.get('/api/quizzes/:slug', async (req, res) => {
     );
 
     if (quizResult.rows.length === 0) {
+      console.log(`Quiz not found for slug: ${slug}`);
       return res.status(404).json({ error: 'Quiz not found' });
     }
 
@@ -678,6 +681,12 @@ app.get('/api/quizzes/:slug', async (req, res) => {
        FROM questions WHERE quiz_id = $1 ORDER BY question_number`,
       [quiz.id]
     );
+
+    // Ensure quiz has questions
+    if (questionsResult.rows.length === 0) {
+      console.error(`Quiz ${slug} (id: ${quiz.id}) has no questions`);
+      return res.status(404).json({ error: 'Quiz data incomplete' });
+    }
 
     // Count attempts
     const countResult = await pool.query(
@@ -728,6 +737,7 @@ app.post('/api/quizzes/:slug/submit', async (req, res) => {
     );
 
     if (quizResult.rows.length === 0) {
+      console.log(`Quiz not found during submit for slug: ${slug}`);
       return res.status(404).json({ error: 'Quiz not found' });
     }
 
