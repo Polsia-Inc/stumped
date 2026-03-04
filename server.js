@@ -1604,6 +1604,18 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
       margin-bottom: 40px;
       text-align: center;
     }
+    .score-badge {
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px; font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 12px 28px;
+      border-radius: 100px;
+      border: 1px solid rgba(200, 255, 0, 0.15);
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
     .share-section p {
       font-size: 15px; color: var(--text-muted);
       margin-bottom: 16px;
@@ -1816,6 +1828,11 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
         border-radius: 14px;
         margin-bottom: 28px;
       }
+      .score-badge {
+        font-size: 24px;
+        padding: 10px 24px;
+        margin-bottom: 14px;
+      }
       .share-section p { font-size: 14px; margin-bottom: 14px; }
       .share-actions {
         flex-direction: column;
@@ -1931,11 +1948,14 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
         <div class="results-msg" id="results-msg"></div>
       </div>
       <div class="share-section">
-        <p>Challenge your friends</p>
+        <div class="score-badge" id="score-badge"></div>
+        <p>Challenge your friends — can they beat your score?</p>
         <div class="share-actions">
-          <button class="btn-share primary" id="btn-copy-link">Copy Link</button>
-          <button class="btn-share secondary" id="btn-share-twitter">Share on X</button>
+          <button class="btn-share primary" id="btn-share">
+            <span id="share-btn-text">Challenge a Friend</span>
+          </button>
           <button class="btn-share secondary" id="btn-play-again">Play Again</button>
+          <button class="btn-share secondary" id="btn-try-another">Try Another Quiz</button>
         </div>
       </div>
       <div class="leaderboard-section">
@@ -2155,6 +2175,10 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
       document.getElementById('results-score').textContent = data.score + '/' + data.total;
       document.getElementById('results-label').textContent = data.percentage + '% correct \\u00b7 ' + formatTime(totalTimeTaken);
 
+      // Score badge
+      const emoji = data.percentage >= 90 ? '⭐' : data.percentage >= 70 ? '🔥' : data.percentage >= 50 ? '👍' : '🧠';
+      document.getElementById('score-badge').textContent = data.score + '/' + data.total + ' ' + emoji;
+
       const msgs = [
         { min: 0, msg: 'Room for improvement...' },
         { min: 30, msg: 'Not bad, not bad.' },
@@ -2222,29 +2246,43 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
       }
     }
 
-    // Share
-    document.getElementById('btn-copy-link').addEventListener('click', () => {
+    // Share - Web Share API on mobile, copy-to-clipboard on desktop
+    document.getElementById('btn-share').addEventListener('click', async () => {
       const url = window.location.origin + '/quiz/' + slug;
-      navigator.clipboard.writeText(url).then(() => {
-        document.getElementById('btn-copy-link').textContent = 'Copied!';
-        setTimeout(() => { document.getElementById('btn-copy-link').textContent = 'Copy Link'; }, 2000);
-      }).catch(() => {
-        // Fallback
+      const score = document.getElementById('results-score').textContent;
+      const shareText = 'I scored ' + score + ' on ' + quiz.topic + ' trivia 🧠 Can you beat me? ' + url;
+
+      // Try Web Share API first (mobile native sharing)
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: quiz.topic + ' Quiz',
+            text: shareText,
+            url: url
+          });
+          return;
+        } catch (err) {
+          // User cancelled or error - fall through to clipboard
+          if (err.name === 'AbortError') return; // User cancelled, don't show copied message
+        }
+      }
+
+      // Fallback to copy-to-clipboard
+      try {
+        await navigator.clipboard.writeText(shareText);
+        document.getElementById('share-btn-text').textContent = 'Copied!';
+        setTimeout(() => { document.getElementById('share-btn-text').textContent = 'Challenge a Friend'; }, 2000);
+      } catch (err) {
+        // Fallback for older browsers
         const ta = document.createElement('textarea');
-        ta.value = url;
+        ta.value = shareText;
         document.body.appendChild(ta);
         ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        document.getElementById('btn-copy-link').textContent = 'Copied!';
-        setTimeout(() => { document.getElementById('btn-copy-link').textContent = 'Copy Link'; }, 2000);
-      });
-    });
-
-    document.getElementById('btn-share-twitter').addEventListener('click', () => {
-      const url = window.location.origin + '/quiz/' + slug;
-      const text = 'I scored ' + document.getElementById('results-score').textContent + ' on this ' + quiz.topic + ' quiz. Think you can beat me?';
-      window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank');
+        document.getElementById('share-btn-text').textContent = 'Copied!';
+        setTimeout(() => { document.getElementById('share-btn-text').textContent = 'Challenge a Friend'; }, 2000);
+      }
     });
 
     document.getElementById('btn-play-again').addEventListener('click', () => {
@@ -2253,6 +2291,10 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
       showScreen('join');
       document.getElementById('player-name').value = '';
       document.getElementById('join-error').classList.remove('show');
+    });
+
+    document.getElementById('btn-try-another').addEventListener('click', () => {
+      window.location.href = '/explore';
     });
 
     // Utils
