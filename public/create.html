@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Quiz | Stumped</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface-2: #1a1a1a;
+            --border: #222;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --accent: #c8ff00;
+            --accent-dim: rgba(200, 255, 0, 0.08);
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* NAV */
+        nav {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1100px;
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .logo span {
+            color: var(--accent);
+        }
+
+        /* CREATE SECTION */
+        .create-section {
+            padding: 80px 0;
+        }
+        .create-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .create-label {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 6px 16px;
+            border-radius: 100px;
+            border: 1px solid rgba(200, 255, 0, 0.15);
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .create-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+        .create-header p {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* FORM */
+        .generate-form {
+            max-width: 520px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 8px;
+            display: block;
+        }
+        .generate-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .generate-input:focus {
+            border-color: var(--accent);
+        }
+        .generate-input::placeholder {
+            color: var(--text-muted);
+        }
+        .generate-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: #0a0a0a;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            letter-spacing: -0.3px;
+        }
+        .generate-btn:hover { opacity: 0.9; }
+        .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .quick-topics {
+            margin-top: 24px;
+        }
+        .quick-topics-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .quick-topics-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .quick-pill {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--text);
+            transition: all 0.2s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .quick-pill:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        .error-msg, .info-msg {
+            margin-bottom: 16px;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+        }
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .error-msg.show { display: block; }
+        .info-msg {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid rgba(200, 255, 0, 0.15);
+        }
+        .info-msg.show { display: block; }
+
+        .status-msg {
+            margin-top: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-msg.show { display: flex; }
+        .mini-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .upgrade-card {
+            margin-top: 40px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            text-align: center;
+            display: none;
+        }
+        .upgrade-card.show { display: block; }
+        .upgrade-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .upgrade-card p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        .upgrade-btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: var(--accent);
+            color: #0a0a0a;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            .create-section { padding: 60px 0; }
+            .create-header h1 { font-size: 32px; }
+            .generate-btn { padding: 16px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">stumped<span>.</span></a>
+            <div id="nav-auth"></div>
+        </div>
+    </nav>
+
+    <section class="create-section">
+        <div class="container">
+            <div class="create-header">
+                <div class="create-label">Quiz Generator</div>
+                <h1>Create a Trivia Quiz</h1>
+                <p>Type any topic and get 10 questions instantly. Share the link and watch your friends compete.</p>
+            </div>
+
+            <div class="generate-form">
+                <div class="info-msg" id="info-msg"></div>
+                <div class="error-msg" id="error-msg"></div>
+
+                <div class="form-group">
+                    <label class="form-label" for="topic-input">Quiz Topic</label>
+                    <input type="text" class="generate-input" id="topic-input" placeholder="e.g. 90s Hip Hop, Marvel Movies, World Capitals..." maxlength="200" autocomplete="off">
+                </div>
+
+                <button class="generate-btn" id="generate-btn">Generate Quiz</button>
+
+                <div class="status-msg" id="status-msg">
+                    <div class="mini-spinner"></div>
+                    <span>Generating your quiz...</span>
+                </div>
+
+                <div class="quick-topics">
+                    <div class="quick-topics-label">Quick start:</div>
+                    <div class="quick-topics-pills">
+                        <span class="quick-pill" data-topic="90s Hip Hop">90s Hip Hop</span>
+                        <span class="quick-pill" data-topic="Marvel">Marvel</span>
+                        <span class="quick-pill" data-topic="World Capitals">World Capitals</span>
+                        <span class="quick-pill" data-topic="The Office">The Office</span>
+                        <span class="quick-pill" data-topic="Harry Potter">Harry Potter</span>
+                        <span class="quick-pill" data-topic="NBA">NBA</span>
+                        <span class="quick-pill" data-topic="Taylor Swift">Taylor Swift</span>
+                        <span class="quick-pill" data-topic="Greek Mythology">Greek Mythology</span>
+                    </div>
+                </div>
+
+                <div class="upgrade-card" id="upgrade-card">
+                    <h3>🎯 You've reached the free limit</h3>
+                    <p>Free users can create up to 3 quizzes. Upgrade to Pro for unlimited quiz creation, analytics, and more.</p>
+                    <a href="/pricing" class="upgrade-btn">Upgrade to Pro — $4/mo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+    (async function() {
+        const navAuth = document.getElementById('nav-auth');
+        const topicInput = document.getElementById('topic-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const errorMsg = document.getElementById('error-msg');
+        const infoMsg = document.getElementById('info-msg');
+        const statusMsg = document.getElementById('status-msg');
+        const upgradeCard = document.getElementById('upgrade-card');
+        let currentUser = null;
+
+        // Check auth on load
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (!res.ok) {
+                    // Not logged in - redirect to signup
+                    window.location.href = '/signup.html?redirect=/create';
+                    return;
+                }
+
+                const data = await res.json();
+                currentUser = data.user;
+
+                // Show user info in nav
+                navAuth.innerHTML = `<a href="/dashboard" style="font-size:14px;color:var(--text);text-decoration:none;font-weight:500;">${escapeHtml(data.user.displayName)}</a>`;
+
+                // Check if user can create quizzes
+                if (!data.user.isPro && data.user.remainingQuizzes === 0) {
+                    // Show upgrade card, disable form
+                    upgradeCard.classList.add('show');
+                    generateBtn.disabled = true;
+                    topicInput.disabled = true;
+                    document.querySelectorAll('.quick-pill').forEach(p => p.style.pointerEvents = 'none');
+                } else {
+                    // Show remaining quizzes
+                    if (!data.user.isPro) {
+                        infoMsg.textContent = `You have ${data.user.remainingQuizzes} of 3 free quizzes remaining.`;
+                        infoMsg.classList.add('show');
+                    }
+                }
+            } catch (err) {
+                // Redirect to signup on error
+                window.location.href = '/signup.html?redirect=/create';
+            }
+        }
+
+        // Generate quiz
+        async function generateQuiz() {
+            const topic = topicInput.value.trim();
+            if (!topic || topic.length < 2) {
+                errorMsg.textContent = 'Enter a topic (at least 2 characters)';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            errorMsg.classList.remove('show');
+            statusMsg.classList.add('show');
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+
+            try {
+                const res = await fetch('/api/quizzes/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    if (data.authRequired) {
+                        // Not logged in
+                        window.location.href = '/signup.html?redirect=/create';
+                        return;
+                    }
+                    if (data.upgradeRequired) {
+                        // Hit limit - show upgrade card
+                        upgradeCard.classList.add('show');
+                        topicInput.disabled = true;
+                        generateBtn.disabled = true;
+                        statusMsg.classList.remove('show');
+                        return;
+                    }
+                    throw new Error(data.error || 'Failed to generate quiz');
+                }
+
+                // Success - redirect to quiz
+                window.location.href = data.url;
+            } catch (e) {
+                errorMsg.textContent = e.message || 'Something went wrong. Please try again.';
+                errorMsg.classList.add('show');
+                statusMsg.classList.remove('show');
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate Quiz';
+            }
+        }
+
+        // Quick topics
+        document.querySelectorAll('.quick-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                topicInput.value = pill.getAttribute('data-topic');
+                generateQuiz();
+            });
+        });
+
+        generateBtn.addEventListener('click', generateQuiz);
+        topicInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') generateQuiz();
+        });
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        checkAuth();
+    })();
+    </script>
+
+</body>
+</html>

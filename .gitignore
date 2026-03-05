@@ -9,3 +9,10 @@ projects/
 
 # Polsia test fixtures (auto-injected, do not commit)
 test-fixtures/
+
+# Polsia safety (auto-injected)
+.env
+.env.*
+.claude/
+projects/
+*.jsonl

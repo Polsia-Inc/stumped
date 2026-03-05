@@ -245,7 +245,7 @@ app.get('/api/auth/me', async (req, res) => {
     }
 
     const result = await pool.query(
-      'SELECT id, email, display_name, avatar_url, pro, pro_since, pro_expires, bio FROM users WHERE id = $1',
+      'SELECT id, email, display_name, avatar_url, pro, pro_since, pro_expires, bio, quiz_count FROM users WHERE id = $1',
       [req.session.userId]
     );
 
@@ -256,6 +256,8 @@ app.get('/api/auth/me', async (req, res) => {
 
     const user = result.rows[0];
     const proActive = isProActive(user);
+    const quizCount = user.quiz_count || 0;
+    const remainingQuizzes = proActive ? null : Math.max(0, 3 - quizCount);
 
     res.json({
       user: {
@@ -266,7 +268,9 @@ app.get('/api/auth/me', async (req, res) => {
         bio: user.bio,
         isPro: proActive,
         proSince: user.pro_since,
-        proExpires: user.pro_expires
+        proExpires: user.pro_expires,
+        quizCount: quizCount,
+        remainingQuizzes: remainingQuizzes
       }
     });
   } catch (err) {
@@ -553,12 +557,46 @@ app.delete('/api/quizzes/:slug', async (req, res) => {
 // ============================================================
 app.post('/api/quizzes/generate', async (req, res) => {
   try {
+    // REQUIRE AUTHENTICATION - No anonymous quiz creation
+    if (!req.session.userId) {
+      return res.status(401).json({
+        error: 'Please sign up to create quizzes',
+        authRequired: true,
+        signupUrl: '/signup.html'
+      });
+    }
+
     const { topic } = req.body;
     if (!topic || topic.trim().length < 2) {
       return res.status(400).json({ error: 'Topic must be at least 2 characters' });
     }
 
     const cleanTopic = topic.trim().substring(0, 200);
+
+    // CHECK QUIZ LIMITS FOR FREE USERS
+    const userResult = await pool.query(
+      'SELECT quiz_count, pro, pro_expires FROM users WHERE id = $1',
+      [req.session.userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user = userResult.rows[0];
+    const proActive = isProActive(user);
+    const quizCount = user.quiz_count || 0;
+
+    // Free users: limited to 3 quizzes
+    if (!proActive && quizCount >= 3) {
+      return res.status(403).json({
+        error: 'Free users can create up to 3 quizzes. Upgrade to Pro for unlimited quiz creation.',
+        upgradeRequired: true,
+        upgradeUrl: PRO_PAYMENT_LINK,
+        remainingQuizzes: 0,
+        limit: 3
+      });
+    }
 
     // Generate questions with AI
     const completion = await openai.chat.completions.create({
@@ -617,12 +655,9 @@ Rules:
     try {
       await client.query('BEGIN');
 
-      // Link quiz to user if logged in
-      const userId = req.session.userId || null;
-
       const quizResult = await client.query(
         'INSERT INTO quizzes (slug, topic, created_by_user_id) VALUES ($1, $2, $3) RETURNING id, slug',
-        [slug, cleanTopic, userId]
+        [slug, cleanTopic, req.session.userId]
       );
       const quizId = quizResult.rows[0].id;
 
@@ -635,15 +670,32 @@ Rules:
         );
       }
 
+      // INCREMENT QUIZ COUNT FOR FREE USERS
+      await client.query(
+        'UPDATE users SET quiz_count = quiz_count + 1 WHERE id = $1',
+        [req.session.userId]
+      );
+
       await client.query('COMMIT');
 
-      console.log(`Quiz created successfully: slug=${slug}, topic="${cleanTopic}", questions=${questions.length}`);
+      console.log(`Quiz created successfully: slug=${slug}, topic="${cleanTopic}", questions=${questions.length}, userId=${req.session.userId}`);
+
+      // Calculate remaining quizzes for free users
+      const updatedUser = await pool.query(
+        'SELECT quiz_count, pro, pro_expires FROM users WHERE id = $1',
+        [req.session.userId]
+      );
+      const newQuizCount = updatedUser.rows[0].quiz_count;
+      const isPro = isProActive(updatedUser.rows[0]);
+      const remainingQuizzes = isPro ? null : Math.max(0, 3 - newQuizCount);
 
       res.json({
         slug,
         topic: cleanTopic,
         questionCount: questions.length,
-        url: `/quiz/${slug}`
+        url: `/quiz/${slug}`,
+        remainingQuizzes: remainingQuizzes,
+        isPro: isPro
       });
     } catch (dbErr) {
       await client.query('ROLLBACK');
@@ -1344,6 +1396,11 @@ app.get('/pricing', (req, res) => {
 // Explore page
 app.get('/explore', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'explore.html'));
+});
+
+// Create quiz page
+app.get('/create', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'create.html'));
 });
 
 // Admin pages

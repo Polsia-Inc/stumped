@@ -750,7 +750,7 @@
                 <div class="nav-links">
                     <a href="/" class="nav-link">Home</a>
                     <a href="/explore" class="nav-link">Explore</a>
-                    <a href="/#generate" class="nav-link">Create Quiz</a>
+                    <a href="/create" class="nav-link" id="nav-create-link">Create Quiz</a>
                 </div>
                 <div id="nav-auth">
                     <div class="nav-tag">Loading...</div>
@@ -761,37 +761,20 @@
 
     <section class="hero">
         <div class="container">
-            <div class="hero-label">Instant trivia generator</div>
-            <h1>Any topic.<br>Ten questions.<br><em>One link.</em></h1>
-            <p>Generate a trivia quiz on literally anything, share the link, and watch your friends try to beat each other on the leaderboard. No app. No account. Just bragging rights.</p>
-            <div class="generate-form" id="generate">
-                <div class="generate-row">
-                    <input type="text" class="generate-input" id="topic-input" placeholder="Enter a topic... e.g. 90s Hip Hop" maxlength="200" autocomplete="off">
-                    <button class="generate-btn" id="generate-btn">Generate</button>
-                </div>
-                <div class="generate-error" id="generate-error"></div>
-                <div class="generate-status" id="generate-status">
-                    <div class="mini-spinner"></div>
-                    <span>Generating your quiz...</span>
-                </div>
+            <div class="hero-label">Play. Challenge. Compete.</div>
+            <h1>Trivia quizzes<br>on <em>any topic</em></h1>
+            <p>Jump into hundreds of quizzes, climb the leaderboard, and challenge your friends. Each quiz has 10 questions, a 30-second timer, and bragging rights on the line.</p>
+            <div style="margin-top: 40px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                <a href="#trending" style="padding: 16px 32px; background: var(--accent); color: #0a0a0a; border: none; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; text-decoration: none; letter-spacing: -0.3px;">Browse Quizzes</a>
+                <a href="/explore" style="padding: 16px 32px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; text-decoration: none; letter-spacing: -0.3px;">Explore All</a>
             </div>
-            <div class="quick-topics">
-                <div class="quick-topics-label">Popular topics:</div>
-                <div class="quick-topics-pills">
-                    <span class="quick-pill" data-topic="90s Hip Hop">90s Hip Hop</span>
-                    <span class="quick-pill" data-topic="Marvel">Marvel</span>
-                    <span class="quick-pill" data-topic="World Capitals">World Capitals</span>
-                    <span class="quick-pill" data-topic="The Office">The Office</span>
-                    <span class="quick-pill" data-topic="Harry Potter">Harry Potter</span>
-                    <span class="quick-pill" data-topic="NBA">NBA</span>
-                    <span class="quick-pill" data-topic="Taylor Swift">Taylor Swift</span>
-                    <span class="quick-pill" data-topic="Greek Mythology">Greek Mythology</span>
-                </div>
+            <div style="margin-top: 32px;">
+                <p style="font-size: 14px; color: var(--text-muted);">Want to create your own quiz? <a href="#" id="create-quiz-cta" style="color: var(--accent); font-weight: 600; text-decoration: none;">Sign up free →</a></p>
             </div>
         </div>
     </section>
 
-    <section class="search-section" id="search-section" style="display:none;">
+    <section class="search-section" id="search-section">
         <div class="container">
             <div class="search-bar">
                 <input type="text" class="search-input" id="search-input" placeholder="Search quizzes..." autocomplete="off">
@@ -800,14 +783,14 @@
         </div>
     </section>
 
-    <section class="trending-section" id="trending-section" style="display:none;">
+    <section class="trending-section" id="trending-section">
         <div class="container">
-            <h2 class="section-header">Trending Quizzes</h2>
+            <h2 class="section-header">🔥 Trending Quizzes</h2>
             <div class="quiz-grid" id="trending-grid"></div>
         </div>
     </section>
 
-    <section class="explore-section" id="explore-section" style="display:none;">
+    <section class="explore-section" id="explore-section">
         <div class="container">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;">
                 <h2 class="section-header" style="margin:0;">Explore Quizzes</h2>
@@ -941,24 +924,45 @@
     })();
     </script>
 
-    <!-- Auth State -->
+    <!-- Auth State & Create Quiz CTA -->
     <script>
     (function() {
         const navAuth = document.getElementById('nav-auth');
+        const createCTA = document.getElementById('create-quiz-cta');
+        let currentUser = null;
 
         async function loadAuthState() {
             try {
                 const res = await fetch('/api/auth/me');
                 if (res.ok) {
                     const data = await res.json();
-                    // User is logged in
+                    currentUser = data.user;
+
+                    // User is logged in - show quiz count or Pro badge
+                    let quizInfo = '';
+                    if (data.user.isPro) {
+                        quizInfo = '<span class="nav-tag" style="background:var(--accent);color:#0a0a0a;border:none;">PRO</span>';
+                    } else {
+                        quizInfo = `<span class="nav-tag">${data.user.remainingQuizzes}/3 quizzes left</span>`;
+                    }
+
                     navAuth.innerHTML = `
                         <div style="display:flex;align-items:center;gap:16px;">
+                            ${quizInfo}
                             <a href="/dashboard" style="font-size:14px;color:var(--text);text-decoration:none;font-weight:500;">${escHtml(data.user.displayName)}</a>
                             <button id="logout-btn" style="font-size:13px;color:var(--text-muted);background:none;border:1px solid var(--border);padding:6px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;">Logout</button>
                         </div>
                     `;
                     document.getElementById('logout-btn').addEventListener('click', logout);
+
+                    // Update create CTA for logged-in users
+                    if (data.user.remainingQuizzes > 0 || data.user.isPro) {
+                        createCTA.textContent = 'Create a quiz →';
+                        createCTA.href = '/create';
+                    } else {
+                        createCTA.textContent = 'Upgrade to Pro for unlimited quizzes →';
+                        createCTA.href = '/pricing';
+                    }
                 } else {
                     // User is not logged in
                     navAuth.innerHTML = `
@@ -967,6 +971,10 @@
                             <a href="/signup.html" style="font-size:13px;color:#0a0a0a;background:var(--accent);padding:6px 16px;border-radius:100px;text-decoration:none;font-weight:500;">Sign Up</a>
                         </div>
                     `;
+
+                    // Update create CTA for logged-out users
+                    createCTA.textContent = 'Sign up free →';
+                    createCTA.href = '/signup.html';
                 }
             } catch (err) {
                 // Show signup/login on error
@@ -976,6 +984,7 @@
                         <a href="/signup.html" style="font-size:13px;color:#0a0a0a;background:var(--accent);padding:6px 16px;border-radius:100px;text-decoration:none;font-weight:500;">Sign Up</a>
                     </div>
                 `;
+                createCTA.href = '/signup.html';
             }
         }
 
@@ -998,75 +1007,6 @@
     })();
     </script>
 
-    <!-- Quiz Generation -->
-    <script>
-    (function() {
-        const input = document.getElementById('topic-input');
-        const btn = document.getElementById('generate-btn');
-        const error = document.getElementById('generate-error');
-        const status = document.getElementById('generate-status');
-
-        // Make topic pills clickable (demo section)
-        document.querySelectorAll('.topic-pill').forEach(pill => {
-            pill.addEventListener('click', () => {
-                input.value = pill.textContent;
-                input.focus();
-            });
-        });
-
-        // Make quick pills clickable (generate quiz directly)
-        document.querySelectorAll('.quick-pill').forEach(pill => {
-            pill.addEventListener('click', () => {
-                const topic = pill.getAttribute('data-topic');
-                input.value = topic;
-                generateQuiz();
-            });
-        });
-
-        // Generate quiz
-        async function generateQuiz() {
-            const topic = input.value.trim();
-            if (!topic || topic.length < 2) {
-                error.textContent = 'Enter a topic (at least 2 characters)';
-                error.classList.add('show');
-                return;
-            }
-
-            error.classList.remove('show');
-            status.classList.add('show');
-            btn.disabled = true;
-            btn.textContent = 'Generating...';
-
-            try {
-                const res = await fetch('/api/quizzes/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ topic })
-                });
-
-                const data = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(data.error || 'Failed to generate quiz');
-                }
-
-                // Redirect to quiz page
-                window.location.href = data.url;
-            } catch (e) {
-                error.textContent = e.message || 'Something went wrong. Please try again.';
-                error.classList.add('show');
-                status.classList.remove('show');
-                btn.disabled = false;
-                btn.textContent = 'Generate';
-            }
-        }
-
-        btn.addEventListener('click', generateQuiz);
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') generateQuiz();
-        });
-    })();
-    </script>
 
     <!-- Load Quizzes & Search -->
     <script>
