@@ -55,6 +55,46 @@ app.get('/health', (req, res) => {
   res.json({ status: 'healthy' });
 });
 
+// Server-side page view tracking middleware (BEFORE static files)
+app.use((req, res, next) => {
+  // Only track HTML page requests (skip API, static assets)
+  if (req.method === 'GET' && !req.path.startsWith('/api/') && !req.path.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json)$/i)) {
+    const user_agent = req.headers['user-agent'];
+    const ip_address = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    // Filter out bots
+    const BOT_PATTERNS = [
+      /bot/i, /crawler/i, /spider/i, /scraper/i, /curl/i, /wget/i,
+      /GPTBot/i, /ChatGPT/i, /Claude/i, /Anthropic/i,
+      /GoogleBot/i, /Bingbot/i, /Slurp/i, /DuckDuckBot/i,
+      /Baiduspider/i, /YandexBot/i, /Sogou/i, /Exabot/i,
+      /facebookexternalhit/i, /WhatsApp/i, /Telegram/i,
+      /LinkedInBot/i, /TwitterBot/i, /Slack/i, /Discord/i,
+      /Amazonbot/i, /AppleBot/i, /Pinterestbot/i,
+      /SemrushBot/i, /AhrefsBot/i, /MJ12bot/i, /DotBot/i,
+      /PetalBot/i, /Bytespider/i, /DataForSeoBot/i,
+      /ZoomBot/i, /ImagesiftBot/i, /Applebot/i,
+      /archive.org_bot/i, /ArchiveBot/i, /Uptimebot/i,
+      /StatusCake/i, /Pingdom/i, /NewRelic/i, /Datadog/i
+    ];
+
+    const isBot = BOT_PATTERNS.some(pattern => pattern.test(user_agent || ''));
+
+    if (!isBot) {
+      // Track page view asynchronously (don't block response)
+      pool.query(
+        `INSERT INTO events (visitor_id, event_type, page_path, referrer, user_agent, ip_address, metadata)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        ['server', 'page_view', req.path, req.headers.referer || null, user_agent, ip_address, JSON.stringify({})]
+      ).catch(err => {
+        // Silently fail - never break page load due to tracking
+        console.error('Server-side tracking error:', err);
+      });
+    }
+  }
+  next();
+});
+
 // Serve static files from public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -1170,6 +1210,128 @@ app.get('/api/admin/dashboard', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('Admin dashboard error:', err);
     res.status(500).json({ error: 'Failed to load dashboard data' });
+  }
+});
+
+// ============================================================
+// EVENT TRACKING
+// ============================================================
+
+// Bot user agent patterns to filter out (crawlers, scrapers, bots)
+const BOT_PATTERNS = [
+  /bot/i, /crawler/i, /spider/i, /scraper/i, /curl/i, /wget/i,
+  /GPTBot/i, /ChatGPT/i, /Claude/i, /Anthropic/i,
+  /GoogleBot/i, /Bingbot/i, /Slurp/i, /DuckDuckBot/i,
+  /Baiduspider/i, /YandexBot/i, /Sogou/i, /Exabot/i,
+  /facebookexternalhit/i, /WhatsApp/i, /Telegram/i,
+  /LinkedInBot/i, /TwitterBot/i, /Slack/i, /Discord/i,
+  /Amazonbot/i, /AppleBot/i, /Pinterestbot/i,
+  /SemrushBot/i, /AhrefsBot/i, /MJ12bot/i, /DotBot/i,
+  /PetalBot/i, /Bytespider/i, /DataForSeoBot/i,
+  /ZoomBot/i, /ImagesiftBot/i, /Applebot/i,
+  /archive.org_bot/i, /ArchiveBot/i, /Uptimebot/i,
+  /StatusCake/i, /Pingdom/i, /NewRelic/i, /Datadog/i
+];
+
+function isBot(userAgent) {
+  if (!userAgent) return false;
+  return BOT_PATTERNS.some(pattern => pattern.test(userAgent));
+}
+
+// Track event endpoint (client-side tracking)
+app.post('/api/events', async (req, res) => {
+  try {
+    const { visitor_id, event_type, page_path, referrer, metadata } = req.body;
+    const user_agent = req.headers['user-agent'];
+    const ip_address = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    // Filter out bots
+    if (isBot(user_agent)) {
+      return res.json({ tracked: false, reason: 'bot' });
+    }
+
+    // Validate required fields
+    if (!visitor_id || !event_type) {
+      return res.status(400).json({ error: 'visitor_id and event_type are required' });
+    }
+
+    // Insert event
+    await pool.query(
+      `INSERT INTO events (visitor_id, event_type, page_path, referrer, user_agent, ip_address, metadata)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [visitor_id, event_type, page_path, referrer, user_agent, ip_address, JSON.stringify(metadata || {})]
+    );
+
+    res.json({ tracked: true });
+  } catch (err) {
+    console.error('Event tracking error:', err);
+    // Don't return 500 - tracking failures should never break user experience
+    res.json({ tracked: false, reason: 'error' });
+  }
+});
+
+// Admin events dashboard API
+app.get('/api/admin/events', requireAdmin, async (req, res) => {
+  try {
+    const timeFilter = req.query.time || '24h'; // 24h, 7d, 30d
+
+    let timeInterval;
+    switch (timeFilter) {
+      case '7d':
+        timeInterval = '7 days';
+        break;
+      case '30d':
+        timeInterval = '30 days';
+        break;
+      default:
+        timeInterval = '24 hours';
+    }
+
+    // Total events
+    const totalEventsResult = await pool.query(
+      `SELECT COUNT(*) as count FROM events WHERE created_at >= NOW() - INTERVAL '${timeInterval}'`
+    );
+    const totalEvents = parseInt(totalEventsResult.rows[0].count);
+
+    // Unique visitors
+    const uniqueVisitorsResult = await pool.query(
+      `SELECT COUNT(DISTINCT visitor_id) as count FROM events WHERE created_at >= NOW() - INTERVAL '${timeInterval}'`
+    );
+    const uniqueVisitors = parseInt(uniqueVisitorsResult.rows[0].count);
+
+    // Event breakdown by type
+    const eventBreakdownResult = await pool.query(
+      `SELECT event_type, COUNT(*) as count
+       FROM events
+       WHERE created_at >= NOW() - INTERVAL '${timeInterval}'
+       GROUP BY event_type
+       ORDER BY count DESC`
+    );
+    const eventBreakdown = eventBreakdownResult.rows.map(row => ({
+      event_type: row.event_type,
+      count: parseInt(row.count)
+    }));
+
+    // Recent events (last 50)
+    const recentEventsResult = await pool.query(
+      `SELECT event_type, page_path, metadata, created_at
+       FROM events
+       WHERE created_at >= NOW() - INTERVAL '${timeInterval}'
+       ORDER BY created_at DESC
+       LIMIT 50`
+    );
+    const recentEvents = recentEventsResult.rows;
+
+    res.json({
+      totalEvents,
+      uniqueVisitors,
+      eventBreakdown,
+      recentEvents,
+      timeFilter
+    });
+  } catch (err) {
+    console.error('Admin events error:', err);
+    res.status(500).json({ error: 'Failed to load events data' });
   }
 });
 

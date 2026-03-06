@@ -1,0 +1,32 @@
+[
+  {
+    "content": "Create events table migration with bot filtering",
+    "status": "completed",
+    "activeForm": "Creating events table migration"
+  },
+  {
+    "content": "Add /api/events endpoint + server-side tracking middleware",
+    "status": "completed",
+    "activeForm": "Adding event tracking API"
+  },
+  {
+    "content": "Create analytics.js client library + integrate into pages",
+    "status": "completed",
+    "activeForm": "Creating client analytics library"
+  },
+  {
+    "content": "Build /admin-events.html dashboard",
+    "status": "completed",
+    "activeForm": "Building admin dashboard"
+  },
+  {
+    "content": "Commit + push all changes",
+    "status": "in_progress",
+    "activeForm": "Deploying to production"
+  },
+  {
+    "content": "Verify endpoints live on production",
+    "status": "pending",
+    "activeForm": "Verifying production deployment"
+  }
+]
