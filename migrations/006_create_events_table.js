@@ -1,23 +1,25 @@
-exports.up = (pgm) => {
-  pgm.createTable('events', {
-    id: 'id',
-    visitor_id: { type: 'varchar(255)', notNull: true }, // Session-based ID from localStorage
-    event_type: { type: 'varchar(100)', notNull: true }, // page_view, quiz_generate_start, etc.
-    page_path: { type: 'text' }, // URL path
-    referrer: { type: 'text' }, // HTTP referrer
-    user_agent: { type: 'text' }, // Browser user agent
-    ip_address: { type: 'inet' }, // IP address
-    metadata: { type: 'jsonb', default: '{}' }, // Event-specific data (quiz_id, score, etc.)
-    created_at: { type: 'timestamp', default: pgm.func('current_timestamp'), notNull: true }
-  });
+module.exports = {
+  name: 'create_events_table',
+  up: async (client) => {
+    // Events table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS events (
+        id SERIAL PRIMARY KEY,
+        visitor_id VARCHAR(255) NOT NULL,
+        event_type VARCHAR(100) NOT NULL,
+        page_path TEXT,
+        referrer TEXT,
+        user_agent TEXT,
+        ip_address INET,
+        metadata JSONB DEFAULT '{}',
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
 
-  // Indexes for fast queries
-  pgm.createIndex('events', 'visitor_id');
-  pgm.createIndex('events', 'event_type');
-  pgm.createIndex('events', 'created_at');
-  pgm.createIndex('events', ['event_type', 'created_at']); // Composite for dashboard queries
-};
-
-exports.down = (pgm) => {
-  pgm.dropTable('events');
+    // Indexes for fast queries
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_events_visitor_id ON events(visitor_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_events_event_type ON events(event_type)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_events_created_at ON events(created_at)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_events_type_time ON events(event_type, created_at)`);
+  }
 };
