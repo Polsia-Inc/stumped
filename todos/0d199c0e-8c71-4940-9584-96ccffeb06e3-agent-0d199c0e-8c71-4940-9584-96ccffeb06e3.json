@@ -21,12 +21,12 @@
   },
   {
     "content": "Commit + push all changes",
-    "status": "in_progress",
+    "status": "completed",
     "activeForm": "Deploying to production"
   },
   {
     "content": "Verify endpoints live on production",
-    "status": "pending",
+    "status": "in_progress",
     "activeForm": "Verifying production deployment"
   }
 ]
