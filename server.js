@@ -55,6 +55,71 @@ app.get('/health', (req, res) => {
   res.json({ status: 'healthy' });
 });
 
+// ============================================================
+// SEO Endpoints
+// ============================================================
+
+// robots.txt
+app.get('/robots.txt', (req, res) => {
+  const appUrl = process.env.APP_URL || 'https://stumped.polsia.app';
+  res.type('text/plain');
+  res.send(`User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: ${appUrl}/sitemap.xml`);
+});
+
+// sitemap.xml - dynamic sitemap including all quiz pages
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const appUrl = process.env.APP_URL || 'https://stumped.polsia.app';
+
+    // Fetch all quizzes
+    const quizzesResult = await pool.query(
+      'SELECT slug, created_at FROM quizzes ORDER BY created_at DESC'
+    );
+
+    // Build sitemap XML
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+
+    // Homepage
+    xml += '  <url>\n';
+    xml += `    <loc>${appUrl}/</loc>\n`;
+    xml += '    <changefreq>daily</changefreq>\n';
+    xml += '    <priority>1.0</priority>\n';
+    xml += '  </url>\n';
+
+    // Explore page
+    xml += '  <url>\n';
+    xml += `    <loc>${appUrl}/explore</loc>\n`;
+    xml += '    <changefreq>daily</changefreq>\n';
+    xml += '    <priority>0.9</priority>\n';
+    xml += '  </url>\n';
+
+    // All quiz pages
+    quizzesResult.rows.forEach(quiz => {
+      const lastmod = new Date(quiz.created_at).toISOString().split('T')[0];
+      xml += '  <url>\n';
+      xml += `    <loc>${appUrl}/quiz/${quiz.slug}</loc>\n`;
+      xml += `    <lastmod>${lastmod}</lastmod>\n`;
+      xml += '    <changefreq>weekly</changefreq>\n';
+      xml += '    <priority>0.8</priority>\n';
+      xml += '  </url>\n';
+    });
+
+    xml += '</urlset>';
+
+    res.type('application/xml');
+    res.send(xml);
+  } catch (err) {
+    console.error('Sitemap generation error:', err);
+    res.status(500).send('Error generating sitemap');
+  }
+});
+
 // Server-side page view tracking middleware (BEFORE static files)
 app.use((req, res, next) => {
   // Only track HTML page requests (skip API, static assets)
@@ -1447,13 +1512,15 @@ app.get('/quiz/:slug', async (req, res) => {
   try {
     const { slug } = req.params;
 
-    // Fetch quiz info for OG tags
+    // Fetch quiz info for OG tags and SEO
     const quizResult = await pool.query(
-      'SELECT topic FROM quizzes WHERE slug = $1',
+      'SELECT q.topic, q.created_at, COUNT(qst.id) as question_count FROM quizzes q LEFT JOIN questions qst ON qst.quiz_id = q.id WHERE q.slug = $1 GROUP BY q.id',
       [slug]
     );
 
     const topic = quizResult.rows.length > 0 ? quizResult.rows[0].topic : 'Trivia Quiz';
+    const createdAt = quizResult.rows.length > 0 ? quizResult.rows[0].created_at : new Date();
+    const questionCount = quizResult.rows.length > 0 ? parseInt(quizResult.rows[0].question_count) : 10;
     const countResult = quizResult.rows.length > 0
       ? await pool.query('SELECT COUNT(*) as c FROM quiz_attempts WHERE quiz_id = (SELECT id FROM quizzes WHERE slug = $1)', [slug])
       : { rows: [{ c: 0 }] };
@@ -1461,10 +1528,10 @@ app.get('/quiz/:slug', async (req, res) => {
 
     const appUrl = process.env.APP_URL || `https://stumped.polsia.app`;
 
-    res.type('html').send(getQuizPageHTML(slug, topic, playerCount, appUrl));
+    res.type('html').send(getQuizPageHTML(slug, topic, playerCount, questionCount, createdAt, appUrl));
   } catch (err) {
     console.error('Quiz page error:', err);
-    res.type('html').send(getQuizPageHTML(req.params.slug, 'Trivia Quiz', 0, 'https://stumped.polsia.app'));
+    res.type('html').send(getQuizPageHTML(req.params.slug, 'Trivia Quiz', 0, 10, new Date(), 'https://stumped.polsia.app'));
   }
 });
 
@@ -1593,12 +1660,29 @@ app.get('/', (req, res) => {
 // ============================================================
 // HTML Templates
 // ============================================================
-function getQuizPageHTML(slug, topic, playerCount, appUrl) {
+function getQuizPageHTML(slug, topic, playerCount, questionCount, createdAt, appUrl) {
   const ogTitle = playerCount > 0
     ? `Can you beat ${playerCount} ${playerCount === 1 ? 'player' : 'players'}? ${topic} Trivia`
     : `${topic} Trivia - Can You Get Them All Right?`;
   const ogDesc = `10 questions. 30 seconds each. ${playerCount > 0 ? playerCount + ' people have tried. ' : ''}Think you know your stuff?`;
   const ogImage = `${appUrl}/og/quiz/${slug}.png`;
+  const canonicalUrl = `${appUrl}/quiz/${slug}`;
+  const dateCreated = new Date(createdAt).toISOString();
+
+  // JSON-LD structured data for Quiz schema
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Quiz",
+    "name": `${topic} Trivia`,
+    "description": `Test your knowledge on ${topic}`,
+    "url": canonicalUrl,
+    "author": {
+      "@type": "Organization",
+      "name": "Stumped"
+    },
+    "dateCreated": dateCreated,
+    "numberOfQuestions": questionCount
+  };
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -1608,11 +1692,14 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
   <title>${topic} | Stumped</title>
   <meta name="description" content="${ogDesc}">
 
+  <!-- Canonical URL -->
+  <link rel="canonical" href="${canonicalUrl}">
+
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="${ogTitle}">
   <meta property="og:description" content="${ogDesc}">
-  <meta property="og:url" content="${appUrl}/quiz/${slug}">
+  <meta property="og:url" content="${canonicalUrl}">
   <meta property="og:site_name" content="Stumped">
   <meta property="og:image" content="${ogImage}">
   <meta property="og:image:width" content="1200">
@@ -1624,6 +1711,11 @@ function getQuizPageHTML(slug, topic, playerCount, appUrl) {
   <meta name="twitter:title" content="${ogTitle}">
   <meta name="twitter:description" content="${ogDesc}">
   <meta name="twitter:image" content="${ogImage}">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+${JSON.stringify(jsonLd, null, 2)}
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
