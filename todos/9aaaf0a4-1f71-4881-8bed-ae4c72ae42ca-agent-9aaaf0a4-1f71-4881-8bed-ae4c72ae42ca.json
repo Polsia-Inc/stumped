@@ -1,0 +1,27 @@
+[
+  {
+    "content": "Investigate quiz routing code and recent git changes",
+    "status": "completed",
+    "activeForm": "Investigating quiz routing code and recent git changes"
+  },
+  {
+    "content": "Identify root cause with evidence",
+    "status": "completed",
+    "activeForm": "Identifying root cause with evidence"
+  },
+  {
+    "content": "Implement fix for the actual root cause",
+    "status": "completed",
+    "activeForm": "Implementing fix for the actual root cause"
+  },
+  {
+    "content": "Also fix events table tracking error (bonus)",
+    "status": "completed",
+    "activeForm": "Fixing events table tracking error"
+  },
+  {
+    "content": "Deploy and verify quizzes load in production",
+    "status": "in_progress",
+    "activeForm": "Deploying and verifying quizzes load in production"
+  }
+]
