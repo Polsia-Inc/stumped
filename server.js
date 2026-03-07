@@ -148,12 +148,14 @@ app.use((req, res, next) => {
     if (!isBot) {
       // Track page view asynchronously (don't block response)
       pool.query(
-        `INSERT INTO events (visitor_id, event_type, page_path, referrer, user_agent, ip_address, metadata)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        ['server', 'page_view', req.path, req.headers.referer || null, user_agent, ip_address, JSON.stringify({})]
+        `INSERT INTO events (visitor_id, event_name, event_type, page_path, referrer, user_agent, ip_address, metadata)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        ['server', 'page_view', 'page_view', req.path, req.headers.referer || null, user_agent, ip_address, JSON.stringify({})]
       ).catch(err => {
         // Silently fail - never break page load due to tracking
-        console.error('Server-side tracking error:', err);
+        if (!err.message?.includes('already exists')) {
+          console.error('Server-side tracking error:', err.message);
+        }
       });
     }
   }
@@ -1320,11 +1322,11 @@ app.post('/api/events', async (req, res) => {
       return res.status(400).json({ error: 'visitor_id and event_type are required' });
     }
 
-    // Insert event
+    // Insert event (event_name for legacy schema compat, event_type for new schema)
     await pool.query(
-      `INSERT INTO events (visitor_id, event_type, page_path, referrer, user_agent, ip_address, metadata)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [visitor_id, event_type, page_path, referrer, user_agent, ip_address, JSON.stringify(metadata || {})]
+      `INSERT INTO events (visitor_id, event_name, event_type, page_path, referrer, user_agent, ip_address, metadata)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [visitor_id, event_type, event_type, page_path, referrer, user_agent, ip_address, JSON.stringify(metadata || {})]
     );
 
     res.json({ tracked: true });
@@ -2210,6 +2212,7 @@ ${JSON.stringify(jsonLd, null, 2)}
   <nav class="quiz-nav">
     <div class="container">
       <a href="/" class="logo">stumped<span>.</span></a>
+      <span id="nav-info" style="font-size:13px;color:var(--text-muted);font-weight:500;"></span>
       <div id="nav-auth"></div>
     </div>
   </nav>
@@ -2359,19 +2362,26 @@ ${JSON.stringify(jsonLd, null, 2)}
         if (!res.ok) { showScreen('notfound'); return; }
         quiz = await res.json();
 
-        document.getElementById('join-topic').textContent = quiz.topic;
-        document.getElementById('join-topic-name').textContent = quiz.topic;
+        // Safely set text content (never crash on missing element)
+        function setText(id, text) {
+          var el = document.getElementById(id);
+          if (el) el.textContent = text;
+        }
+
+        setText('join-topic', quiz.topic);
+        setText('join-topic-name', quiz.topic);
         const meta = '10 questions \\u00b7 30 seconds each';
         if (quiz.playerCount > 0) {
-          document.getElementById('join-meta').textContent = quiz.playerCount + ' player' + (quiz.playerCount !== 1 ? 's' : '') + ' \\u00b7 ' + meta;
+          setText('join-meta', quiz.playerCount + ' player' + (quiz.playerCount !== 1 ? 's' : '') + ' \\u00b7 ' + meta);
         } else {
-          document.getElementById('join-meta').textContent = meta;
+          setText('join-meta', meta);
         }
-        document.getElementById('quiz-topic-label').textContent = quiz.topic;
-        document.getElementById('nav-info').textContent = quiz.topic;
+        setText('quiz-topic-label', quiz.topic);
+        setText('nav-info', quiz.topic);
 
         showScreen('join');
       } catch (e) {
+        console.error('Quiz load error:', e);
         showScreen('notfound');
       }
     }
