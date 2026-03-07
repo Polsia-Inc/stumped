@@ -1182,3 +1182,433 @@
 2026-03-07T14:29:34.168Z [DEBUG] [API:auth] OAuth token check complete
 2026-03-07T14:29:35.212Z [DEBUG] Stream started - received first chunk
 2026-03-07T14:29:35.813Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:29:36.627Z [DEBUG] executePreToolHooks called for tool: mcp__polsia_infra__push_to_remote
+2026-03-07T14:29:36.627Z [DEBUG] Getting matching hook commands for PreToolUse with query: mcp__polsia_infra__push_to_remote
+2026-03-07T14:29:36.627Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:29:36.627Z [DEBUG] Matched 4 unique hooks for query "mcp__polsia_infra__push_to_remote" (4 before deduplication)
+2026-03-07T14:29:36.628Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:29:36.628Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:29:36.628Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:29:36.628Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:29:36.628Z [DEBUG] Hook approved tool use for mcp__polsia_infra__push_to_remote, bypassing permission check
+2026-03-07T14:29:36.628Z [DEBUG] MCP server "polsia_infra": Calling MCP tool: push_to_remote
+2026-03-07T14:29:36.634Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:36.634Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected token 'I', "[Infra MCP]"... is not valid JSON
+2026-03-07T14:29:36.634Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:36.634Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected token 'I', "[Infra MCP]"... is not valid JSON
+2026-03-07T14:29:36.634Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:36.634Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected token 'I', "[Infra MCP]"... is not valid JSON
+2026-03-07T14:29:36.634Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:36.635Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected token 'I', "[Infra MCP]"... is not valid JSON
+2026-03-07T14:29:36.966Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:36.966Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:37.137Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:37.137Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:37.137Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:37.137Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:37.137Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:37.137Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:37.137Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:37.137Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:37.174Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:37.174Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:37.187Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:37.187Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:37.187Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:37.187Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:37.187Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:37.187Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:37.437Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 153s uptime
+2026-03-07T14:29:37.437Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:38.142Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 154s uptime
+2026-03-07T14:29:38.142Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:29:38.143Z [DEBUG] MCP server "polsia_infra": Tool 'push_to_remote' completed successfully in 1s
+2026-03-07T14:29:38.144Z [DEBUG] Getting matching hook commands for PostToolUse with query: mcp__polsia_infra__push_to_remote
+2026-03-07T14:29:38.144Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:29:38.144Z [DEBUG] Matched 0 unique hooks for query "mcp__polsia_infra__push_to_remote" (0 before deduplication)
+2026-03-07T14:29:38.144Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:29:38.144Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:29:38.144Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:29:38.144Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:29:38.145Z [DEBUG] autocompact: tokens=63845 threshold=167000 effectiveWindow=180000
+2026-03-07T14:29:38.145Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:29:38.145Z [DEBUG] Dynamic tool loading: found 8 discovered tools in message history
+2026-03-07T14:29:38.147Z [DEBUG] Dynamic tool loading: 8/75 deferred tools included
+2026-03-07T14:29:38.148Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:29:38.149Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:29:38.149Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:29:38.150Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:29:40.315Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:29:42.929Z [WARN] [PROMPT CACHE BREAK] unknown cause [source=sdk, call #34, cache read: 63089 → 16711, creation: 45339]
+2026-03-07T14:29:42.931Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-03-07T14:29:42.931Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-03-07T14:29:42.931Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:29:42.931Z [DEBUG] Matched 4 unique hooks for query "Bash" (4 before deduplication)
+2026-03-07T14:29:42.932Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:29:42.932Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:29:42.932Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:29:42.932Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:29:42.932Z [DEBUG] Hook approved tool use for Bash, bypassing permission check
+2026-03-07T14:31:12.943Z [DEBUG] Tool search disabled for model 'global.anthropic.claude-haiku-4-5-20251001-v1:0': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-03-07T14:31:12.944Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.136; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:12.944Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:12.944Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:12.945Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-03-07T14:31:12.945Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:12.945Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-03-07T14:31:12.945Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:12.948Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:12.948Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:12.948Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:12.948Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:12.949Z [DEBUG] autocompact: tokens=62265 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:12.949Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:12.949Z [DEBUG] Dynamic tool loading: found 8 discovered tools in message history
+2026-03-07T14:31:12.951Z [DEBUG] Dynamic tool loading: 8/75 deferred tools included
+2026-03-07T14:31:12.952Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:12.954Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:12.954Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:12.955Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:13.986Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:15.171Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:16.438Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-03-07T14:31:16.438Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-03-07T14:31:16.438Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:16.438Z [DEBUG] Matched 4 unique hooks for query "Bash" (4 before deduplication)
+2026-03-07T14:31:16.439Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:16.439Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:16.439Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:16.439Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:16.439Z [DEBUG] Hook approved tool use for Bash, bypassing permission check
+2026-03-07T14:31:16.449Z [DEBUG] Bash tool error (10ms): Shell command failed
+2026-03-07T14:31:16.449Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-03-07T14:31:16.449Z [DEBUG] Found 0 hook matchers in settings
+2026-03-07T14:31:16.449Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-03-07T14:31:16.450Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:16.450Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:16.450Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:16.450Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:16.450Z [DEBUG] autocompact: tokens=62452 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:16.451Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:16.451Z [DEBUG] Dynamic tool loading: found 8 discovered tools in message history
+2026-03-07T14:31:16.453Z [DEBUG] Dynamic tool loading: 8/75 deferred tools included
+2026-03-07T14:31:16.454Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:16.456Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:16.456Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:16.456Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:18.513Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:20.655Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-03-07T14:31:20.656Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-03-07T14:31:20.656Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:20.656Z [DEBUG] Matched 4 unique hooks for query "Bash" (4 before deduplication)
+2026-03-07T14:31:20.657Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:20.657Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:20.657Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:20.657Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:20.657Z [DEBUG] Hook approved tool use for Bash, bypassing permission check
+2026-03-07T14:31:20.949Z [DEBUG] Tool search disabled for model 'global.anthropic.claude-haiku-4-5-20251001-v1:0': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-03-07T14:31:20.949Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.136; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:20.950Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:20.950Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:20.950Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-03-07T14:31:20.950Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:20.950Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-03-07T14:31:20.950Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:20.952Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:20.952Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:20.952Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:20.952Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:20.954Z [DEBUG] autocompact: tokens=62796 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:20.954Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:20.954Z [DEBUG] Dynamic tool loading: found 8 discovered tools in message history
+2026-03-07T14:31:20.955Z [DEBUG] Dynamic tool loading: 8/75 deferred tools included
+2026-03-07T14:31:20.956Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:20.958Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:20.958Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:20.958Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:21.878Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:23.139Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:24.042Z [DEBUG] executePreToolHooks called for tool: ToolSearch
+2026-03-07T14:31:24.042Z [DEBUG] Getting matching hook commands for PreToolUse with query: ToolSearch
+2026-03-07T14:31:24.042Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:24.042Z [DEBUG] Matched 4 unique hooks for query "ToolSearch" (4 before deduplication)
+2026-03-07T14:31:24.043Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:24.043Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:24.043Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:24.043Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:24.043Z [DEBUG] Hook approved tool use for ToolSearch, bypassing permission check
+2026-03-07T14:31:24.043Z [DEBUG] ToolSearchTool: selected "mcp__polsia_infra__get_status"
+2026-03-07T14:31:24.044Z [DEBUG] Getting matching hook commands for PostToolUse with query: ToolSearch
+2026-03-07T14:31:24.044Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:24.044Z [DEBUG] Matched 0 unique hooks for query "ToolSearch" (0 before deduplication)
+2026-03-07T14:31:24.044Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:24.044Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:24.044Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:24.044Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:24.046Z [DEBUG] autocompact: tokens=62967 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:24.046Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:24.046Z [DEBUG] Dynamic tool loading: found 9 discovered tools in message history
+2026-03-07T14:31:24.048Z [DEBUG] Dynamic tool loading: 9/75 deferred tools included
+2026-03-07T14:31:24.048Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:24.050Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:24.050Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:24.050Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:25.863Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:26.527Z [DEBUG] executePreToolHooks called for tool: mcp__polsia_infra__get_status
+2026-03-07T14:31:26.527Z [DEBUG] Getting matching hook commands for PreToolUse with query: mcp__polsia_infra__get_status
+2026-03-07T14:31:26.527Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:26.527Z [DEBUG] Matched 4 unique hooks for query "mcp__polsia_infra__get_status" (4 before deduplication)
+2026-03-07T14:31:26.528Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:26.528Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:26.528Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:26.528Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:26.528Z [DEBUG] Hook approved tool use for mcp__polsia_infra__get_status, bypassing permission check
+2026-03-07T14:31:26.528Z [DEBUG] MCP server "polsia_infra": Calling MCP tool: get_status
+2026-03-07T14:31:26.908Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 263s uptime
+2026-03-07T14:31:26.908Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:31:27.442Z [DEBUG] MCP server "polsia_infra": Tool 'get_status' completed successfully in 914ms
+2026-03-07T14:31:27.442Z [DEBUG] Getting matching hook commands for PostToolUse with query: mcp__polsia_infra__get_status
+2026-03-07T14:31:27.442Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:27.443Z [DEBUG] Matched 0 unique hooks for query "mcp__polsia_infra__get_status" (0 before deduplication)
+2026-03-07T14:31:27.443Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:27.443Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:27.443Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:27.443Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:27.444Z [DEBUG] autocompact: tokens=63401 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:27.445Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:27.445Z [DEBUG] Dynamic tool loading: found 9 discovered tools in message history
+2026-03-07T14:31:27.446Z [DEBUG] Dynamic tool loading: 9/75 deferred tools included
+2026-03-07T14:31:27.447Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:27.449Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:27.449Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:27.449Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:29.321Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:30.248Z [DEBUG] executePreToolHooks called for tool: ToolSearch
+2026-03-07T14:31:30.249Z [DEBUG] Getting matching hook commands for PreToolUse with query: ToolSearch
+2026-03-07T14:31:30.249Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:30.249Z [DEBUG] Matched 4 unique hooks for query "ToolSearch" (4 before deduplication)
+2026-03-07T14:31:30.250Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:30.250Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:30.250Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:30.250Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:30.250Z [DEBUG] Hook approved tool use for ToolSearch, bypassing permission check
+2026-03-07T14:31:30.250Z [DEBUG] ToolSearchTool: selected "mcp__polsia_infra__get_logs"
+2026-03-07T14:31:30.250Z [DEBUG] Getting matching hook commands for PostToolUse with query: ToolSearch
+2026-03-07T14:31:30.250Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:30.250Z [DEBUG] Matched 0 unique hooks for query "ToolSearch" (0 before deduplication)
+2026-03-07T14:31:30.250Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:30.250Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:30.250Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:30.250Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:30.252Z [DEBUG] autocompact: tokens=63717 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:30.252Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:30.252Z [DEBUG] Dynamic tool loading: found 10 discovered tools in message history
+2026-03-07T14:31:30.254Z [DEBUG] Dynamic tool loading: 10/75 deferred tools included
+2026-03-07T14:31:30.254Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:30.256Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:30.256Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:30.256Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:31.960Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:32.977Z [DEBUG] executePreToolHooks called for tool: mcp__polsia_infra__get_logs
+2026-03-07T14:31:32.977Z [DEBUG] Getting matching hook commands for PreToolUse with query: mcp__polsia_infra__get_logs
+2026-03-07T14:31:32.977Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:32.977Z [DEBUG] Matched 4 unique hooks for query "mcp__polsia_infra__get_logs" (4 before deduplication)
+2026-03-07T14:31:32.978Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:32.978Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:32.978Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:32.978Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:32.978Z [DEBUG] Hook approved tool use for mcp__polsia_infra__get_logs, bypassing permission check
+2026-03-07T14:31:32.978Z [DEBUG] MCP server "polsia_infra": Calling MCP tool: get_logs
+2026-03-07T14:31:33.074Z [DEBUG] MCP server "polsia_infra": STDIO connection dropped after 269s uptime
+2026-03-07T14:31:33.074Z [DEBUG] MCP server "polsia_infra": Connection error: Unexpected non-whitespace character after JSON at position 4
+2026-03-07T14:31:33.303Z [DEBUG] MCP server "polsia_infra": Tool 'get_logs' completed successfully in 325ms
+2026-03-07T14:31:33.304Z [DEBUG] Getting matching hook commands for PostToolUse with query: mcp__polsia_infra__get_logs
+2026-03-07T14:31:33.304Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:33.304Z [DEBUG] Matched 0 unique hooks for query "mcp__polsia_infra__get_logs" (0 before deduplication)
+2026-03-07T14:31:33.305Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:33.305Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:33.305Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:33.305Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:33.306Z [DEBUG] autocompact: tokens=68611 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:33.306Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:33.306Z [DEBUG] Dynamic tool loading: found 10 discovered tools in message history
+2026-03-07T14:31:33.307Z [DEBUG] Dynamic tool loading: 10/75 deferred tools included
+2026-03-07T14:31:33.308Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:33.310Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:33.310Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:33.310Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:35.302Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:37.959Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-03-07T14:31:37.959Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-03-07T14:31:37.959Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:37.959Z [DEBUG] Matched 4 unique hooks for query "Bash" (4 before deduplication)
+2026-03-07T14:31:37.962Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:37.962Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:37.962Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:37.962Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:37.962Z [DEBUG] Hook approved tool use for Bash, bypassing permission check
+2026-03-07T14:31:37.979Z [DEBUG] Tool search disabled for model 'global.anthropic.claude-haiku-4-5-20251001-v1:0': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-03-07T14:31:37.979Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.136; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:37.979Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:37.979Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:37.980Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-03-07T14:31:37.980Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:37.980Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-03-07T14:31:37.980Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:37.982Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:37.982Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:37.982Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:37.982Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:37.983Z [DEBUG] autocompact: tokens=71510 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:37.983Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:37.983Z [DEBUG] Dynamic tool loading: found 10 discovered tools in message history
+2026-03-07T14:31:37.985Z [DEBUG] Dynamic tool loading: 10/75 deferred tools included
+2026-03-07T14:31:37.986Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:37.988Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:37.988Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:37.988Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:39.028Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:40.167Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:41.608Z [DEBUG] executePreToolHooks called for tool: Read
+2026-03-07T14:31:41.608Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-03-07T14:31:41.608Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:41.608Z [DEBUG] Matched 4 unique hooks for query "Read" (4 before deduplication)
+2026-03-07T14:31:41.609Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:41.609Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:41.609Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:41.609Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:41.609Z [DEBUG] Hook approved tool use for Read, bypassing permission check
+2026-03-07T14:31:41.610Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-03-07T14:31:41.610Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:41.610Z [DEBUG] Matched 1 unique hooks for query "Read" (1 before deduplication)
+2026-03-07T14:31:41.611Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:41.611Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:41.611Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:41.611Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:41.612Z [DEBUG] autocompact: tokens=72232 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:41.612Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:41.612Z [DEBUG] Dynamic tool loading: found 10 discovered tools in message history
+2026-03-07T14:31:41.616Z [DEBUG] Dynamic tool loading: 10/75 deferred tools included
+2026-03-07T14:31:41.618Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:41.619Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:41.619Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:41.620Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:43.559Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:47.285Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-03-07T14:31:47.285Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-03-07T14:31:47.285Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:47.285Z [DEBUG] Matched 4 unique hooks for query "Bash" (4 before deduplication)
+2026-03-07T14:31:47.288Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:47.288Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:47.288Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:47.288Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:47.288Z [DEBUG] Hook approved tool use for Bash, bypassing permission check
+2026-03-07T14:31:47.299Z [DEBUG] Tool search disabled for model 'global.anthropic.claude-haiku-4-5-20251001-v1:0': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-03-07T14:31:47.299Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.136; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:47.299Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:47.299Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:47.299Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-03-07T14:31:47.299Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:47.299Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-03-07T14:31:47.299Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:47.302Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:47.302Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:47.302Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:47.302Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:47.302Z [DEBUG] autocompact: tokens=72607 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:47.302Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:47.302Z [DEBUG] Dynamic tool loading: found 10 discovered tools in message history
+2026-03-07T14:31:47.304Z [DEBUG] Dynamic tool loading: 10/75 deferred tools included
+2026-03-07T14:31:47.304Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:47.306Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:47.306Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:47.306Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:47.948Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:49.538Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:31:50.511Z [DEBUG] executePreToolHooks called for tool: Read
+2026-03-07T14:31:50.511Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-03-07T14:31:50.511Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:31:50.511Z [DEBUG] Matched 4 unique hooks for query "Read" (4 before deduplication)
+2026-03-07T14:31:50.512Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:50.512Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:50.512Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:50.512Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:31:50.512Z [DEBUG] Hook approved tool use for Read, bypassing permission check
+2026-03-07T14:31:50.512Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-03-07T14:31:50.512Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:31:50.512Z [DEBUG] Matched 1 unique hooks for query "Read" (1 before deduplication)
+2026-03-07T14:31:50.513Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:31:50.513Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:31:50.513Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:31:50.513Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:31:50.514Z [DEBUG] autocompact: tokens=74134 threshold=167000 effectiveWindow=180000
+2026-03-07T14:31:50.514Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:31:50.514Z [DEBUG] Dynamic tool loading: found 10 discovered tools in message history
+2026-03-07T14:31:50.516Z [DEBUG] Dynamic tool loading: 10/75 deferred tools included
+2026-03-07T14:31:50.517Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:31:50.520Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:31:50.520Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:31:50.520Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:31:52.286Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:32:07.711Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-03-07T14:32:07.711Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-03-07T14:32:07.711Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:32:07.711Z [DEBUG] Matched 4 unique hooks for query "Edit" (4 before deduplication)
+2026-03-07T14:32:07.712Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:32:07.712Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:32:07.712Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:32:07.712Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:32:07.712Z [DEBUG] Hook approved tool use for Edit, bypassing permission check
+2026-03-07T14:32:07.714Z [DEBUG] Writing to temp file: /opt/polsia/workspaces/company-7967/agent-30/exec-261752/stumped/migrations/006_create_events_table.js.tmp.479.1772893927714
+2026-03-07T14:32:07.714Z [DEBUG] Preserving file permissions: 100644
+2026-03-07T14:32:07.714Z [DEBUG] Temp file written successfully, size: 2485 bytes
+2026-03-07T14:32:07.714Z [DEBUG] Applied original permissions to temp file
+2026-03-07T14:32:07.714Z [DEBUG] Renaming /opt/polsia/workspaces/company-7967/agent-30/exec-261752/stumped/migrations/006_create_events_table.js.tmp.479.1772893927714 to /opt/polsia/workspaces/company-7967/agent-30/exec-261752/stumped/migrations/006_create_events_table.js
+2026-03-07T14:32:07.714Z [DEBUG] File /opt/polsia/workspaces/company-7967/agent-30/exec-261752/stumped/migrations/006_create_events_table.js written atomically
+2026-03-07T14:32:07.715Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-03-07T14:32:07.715Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:32:07.715Z [DEBUG] Matched 1 unique hooks for query "Edit" (1 before deduplication)
+2026-03-07T14:32:07.715Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:32:07.715Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:32:07.715Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:32:07.715Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:32:07.716Z [DEBUG] autocompact: tokens=76175 threshold=167000 effectiveWindow=180000
+2026-03-07T14:32:07.716Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:32:07.716Z [DEBUG] Dynamic tool loading: found 10 discovered tools in message history
+2026-03-07T14:32:07.718Z [DEBUG] Dynamic tool loading: 10/75 deferred tools included
+2026-03-07T14:32:07.719Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:32:07.721Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:32:07.721Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:32:07.721Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:32:09.720Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:32:13.258Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-03-07T14:32:13.258Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-03-07T14:32:13.258Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T14:32:13.258Z [DEBUG] Matched 4 unique hooks for query "Bash" (4 before deduplication)
+2026-03-07T14:32:13.259Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:32:13.259Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:32:13.259Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:32:13.260Z [DEBUG] Hook result has permissionBehavior=allow
+2026-03-07T14:32:13.260Z [DEBUG] Hook approved tool use for Bash, bypassing permission check
+2026-03-07T14:32:13.292Z [DEBUG] Tool search disabled for model 'global.anthropic.claude-haiku-4-5-20251001-v1:0': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-03-07T14:32:13.293Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.136; cc_entrypoint=sdk-ts;
+2026-03-07T14:32:13.293Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:32:13.293Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:32:13.293Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-03-07T14:32:13.293Z [DEBUG] Found 5 hook matchers in settings
+2026-03-07T14:32:13.293Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-03-07T14:32:13.293Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:32:13.295Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T14:32:13.295Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T14:32:13.295Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T14:32:13.295Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T14:32:13.296Z [DEBUG] autocompact: tokens=76487 threshold=167000 effectiveWindow=180000
+2026-03-07T14:32:13.296Z [DEBUG] Auto tool search enabled: 20796 tokens (threshold: 20000, 10% of context) [source: query]
+2026-03-07T14:32:13.296Z [DEBUG] Dynamic tool loading: found 10 discovered tools in message history
+2026-03-07T14:32:13.298Z [DEBUG] Dynamic tool loading: 10/75 deferred tools included
+2026-03-07T14:32:13.299Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.33.dc6; cc_entrypoint=sdk-ts;
+2026-03-07T14:32:13.300Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T14:32:13.300Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T14:32:13.301Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T14:32:14.195Z [DEBUG] Stream started - received first chunk
+2026-03-07T14:32:15.317Z [DEBUG] Stream started - received first chunk
