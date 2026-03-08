@@ -1317,9 +1317,13 @@ app.post('/api/events', async (req, res) => {
       return res.json({ tracked: false, reason: 'bot' });
     }
 
-    // Validate required fields
-    if (!visitor_id || !event_type) {
-      return res.status(400).json({ error: 'visitor_id and event_type are required' });
+    // Validate required fields with strict type checking
+    if (!visitor_id || typeof visitor_id !== 'string' || visitor_id.trim() === '') {
+      return res.status(400).json({ error: 'visitor_id is required and must be a non-empty string' });
+    }
+
+    if (!event_type || typeof event_type !== 'string' || event_type.trim() === '') {
+      return res.status(400).json({ error: 'event_type is required and must be a non-empty string' });
     }
 
     // Insert event (event_name for legacy schema compat, event_type for new schema)

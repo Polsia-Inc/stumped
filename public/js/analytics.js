@@ -16,6 +16,12 @@
 
   // Track event (fire-and-forget)
   function track(eventType, metadata = {}) {
+    // Guard: Don't fire events without a valid event name
+    if (!eventType || typeof eventType !== 'string' || eventType.trim() === '') {
+      console.warn('StumpedAnalytics: Invalid event_type, skipping track:', eventType);
+      return;
+    }
+
     const visitorId = getVisitorId();
     const eventData = {
       visitor_id: visitorId,
